@@ -31,6 +31,13 @@ function UserMore(){
                 </button>
 
                 <nav className="mt-16 flex-1 flex flex-col space-y-4 px-6">
+                     <button
+                        className="text-left text-lg font-medium hover:text-red-600 transition-colors shadow-xl
+                        rounded-lg px-4 py-2 bg-white"
+                        onClick={() => go("/history")}
+                    >
+                       history
+                    </button>
                     <button
                         className="text-left text-lg font-medium hover:text-red-600 transition-colors shadow-xl
                         rounded-lg px-4 py-2 bg-white"
@@ -39,23 +46,18 @@ function UserMore(){
                         🎶 Playlists
                     </button>
                     <button
-                        className="text-left text-lg font-medium hover:text-red-600 transition-colors  shadow-xl
+                        className="text-left text-lg font-medium hover:text-red-600 transition-colors shadow-xl
                         rounded-lg px-4 py-2 bg-white"
-                        onClick={() => go("/Liked")}
+                        onClick={() => go("/subscribers")}
                     >
-                        ❤️ Liked videos
+                         Subscribers
                     </button>
+                    
+                   
                     <button
                         className="text-left text-lg font-medium hover:text-red-600 transition-colors  shadow-xl
                         rounded-lg px-4 py-2 bg-white"
-                        onClick={() => go("/Posts")}
-                    >
-                        💬 Posts
-                    </button>
-                    <button
-                        className="text-left text-lg font-medium hover:text-red-600 transition-colors  shadow-xl
-                        rounded-lg px-4 py-2 bg-white"
-                        onClick={() => go("/likedvdos")}
+                        onClick={() => go("/likedvideos")}
                     >
                         💬 Liked Videos
                     </button>
@@ -80,6 +82,14 @@ function UserMore(){
                     >
                       subscribed channels
                     </button>
+                    
+                    <button
+                        className="text-left text-lg font-medium hover:text-red-600 transition-colors  shadow-xl
+                        rounded-lg px-4 py-2 bg-white"
+                        onClick={() => go("/settings")}
+                    >
+                       Settings
+                    </button>   
                 </nav>
             </div>
         </div>

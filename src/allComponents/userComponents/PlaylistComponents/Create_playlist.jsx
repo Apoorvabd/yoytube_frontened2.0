@@ -1,8 +1,10 @@
-import { use,useState ,useEffect} from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { DataContext } from "@/Context/UserContext";
 
 function Create_playlist() { 
+    const {setNewPlalistS,newPlaylistS}=useContext(DataContext);
     const [newPlaylist, setNewPlaylist] = useState({
         name: "",
         description: "",
@@ -26,7 +28,7 @@ function Create_playlist() {
                     }
                 );
                 console.log("Playlist created:", response.data);
-                toast.success(`Playlist "${response.data.data.name}" created successfully! `);
+                toast.success(`Playlist  created successfully! `);
                 // Optionally, reset form or show success message
             } catch (err) {
                 console.error("Failed to create playlist:", err);
@@ -39,6 +41,7 @@ function Create_playlist() {
         <div className="flex h-screen items-center justify-center bg-gray-100">
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg"> 
                 <h2 className="mb-4 text-2xl font-bold text-gray-800">Create New Playlist</h2>
+                <p className="fixed top-0 right-9 text-black font-extrabold pointer" onClick={()=>setNewPlalistS(false)}>exit</p>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="mb-2 block text-sm font-semibold text-gray-700">Playlist Name</label> 

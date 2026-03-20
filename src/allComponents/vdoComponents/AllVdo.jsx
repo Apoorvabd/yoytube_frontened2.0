@@ -11,6 +11,8 @@ function AllVdo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log("videos in allvdo component", videos);
+
   const sampleVideos = [
     {
       _id: "sample1",
@@ -91,6 +93,7 @@ function AllVdo() {
             ))}
           </div>
         ) : (
+
           !loading && (
             <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">
               No videos available

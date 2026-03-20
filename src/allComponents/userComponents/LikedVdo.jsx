@@ -1,0 +1,53 @@
+//function is to get all vdo liked by user
+import { useContext, useEffect, useState } from 'react';
+import { DataContext } from '@/Context/UserContext';
+import Card_for_vd0 from '../vdoComponents/Card_for_vd0';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+export default function LikedVdo() {
+    const navigate = useNavigate();
+    const { user, setUser } = useContext(DataContext);
+    const [likedVideos, setLikedVideos] = useState([]);
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    useEffect(() => {
+        if (!storedUser || !storedUser.accessToken) {
+            navigate("/login");
+        } else {
+            fetchLikedVideos();
+        }
+    }, []);
+
+    const fetchLikedVideos = async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/v1/likes/videos`
+                ,{
+                    headers: {
+                        Authorization: `Bearer ${storedUser.accessToken}`,
+                    },
+                    }
+            );
+
+            setLikedVideos(response.data.data);
+            console.log("Liked videos fetched successfully:", response.data.data);
+        } catch (error) {
+            console.error("Error fetching liked videos:", error);
+        }
+    };
+      // Dependency array includes navigate and storedUser    
+
+    
+    return (
+        <div className="p-4">
+            <h2 className="text-2xl font-bold mb-4">Liked Videos</h2>
+            
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {likedVideos.map((video) => (
+                        <Card_for_vd0 key={video._id} video={video} />
+                    ))}
+                </div>
+            
+        </div>
+    );
+}   

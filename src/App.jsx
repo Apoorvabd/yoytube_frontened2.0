@@ -14,9 +14,17 @@ import Uploadvdo from "./allComponents/userComponents/Uploadvdo";
 import Showvdo from "./allComponents/vdoComponents/Showvdo";
 import { useParams } from "react-router-dom";
 import VdoComments from "./allComponents/vdoComponents/Vdocomments";
-import  Playlist  from "./allComponents/vdoComponents/Playlist";
-import  VdoFunc from "./allComponents/vdoComponents/VdoFunc"
+import Playlist from "./allComponents/userComponents/PlaylistComponents/Playlist";
 import SubscribedChannel from "./allComponents/userComponents/SubcribedChannel";
+import UserProfile from "./allComponents/userComponents/UserProfile";
+import UsersSettings from "./allComponents/userComponents/UsersSettings";
+import PrivacyPolicy from "./allComponents/userComponents/settingsForUser/PrivacyPolicy";
+import Help from "./allComponents/userComponents/settingsForUser/Help";
+import AccountCenter from "./allComponents/userComponents/settingsForUser/AccountCenter";
+import UpdateProfile from "./allComponents/userComponents/settingsForUser/UpdateProfile";
+import LikedVdo from "./allComponents/userComponents/LikedVdo";
+import WatchHistory from "./allComponents/userComponents/Watchhistory";
+import Subscribers from "./allComponents/userComponents/Subscribers";
 
 // wrapper that keys Showvdo by id so it fully remounts when the parameter changes
 function VideoWrapper() {
@@ -42,12 +50,21 @@ export default function App() {
         <Route path="/Dashboard" element={<UserDashboard />} />
         <Route path="/Playlist" element={<Playlist/>}/>
         <Route path="/subscribedchannels" element={<SubscribedChannel/>}/>
+        <Route path="/channel/:id" element={<UserProfile />} />
+        < Route path="/settings" element={<UsersSettings />} />
+        < Route path="/settings/privacy" element={<PrivacyPolicy />} />
+        <Route path="/settings/help" element={<Help/>}/>
+        <Route path="settings/accountcenter" element={<AccountCenter/>}/>
+        <Route path="settings/accountcenter/updateprofile" element={<UpdateProfile/>}/>
         {/* wrap Showvdo in a wrapper with key so it remounts when id changes */}
         <Route
           path="/videos/:id"
           element={<VideoWrapper />}
         />
-</Routes>
+        <Route path="/likedvideos" element={<LikedVdo/>}/>
+        <Route path="/history" element={<WatchHistory/>}/>
+        <Route path="/subscribers" element={<Subscribers/>}/>
+        </Routes>
        <Toaster position="top-right" />
 
        
