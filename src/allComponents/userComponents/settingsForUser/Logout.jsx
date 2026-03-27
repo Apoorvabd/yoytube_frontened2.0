@@ -1,5 +1,5 @@
 //function to logout the user by clearing the local storage and redirecting to the login page
-import axios from "axios";
+import api from "../../../lib/api";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 function Logout() {
@@ -9,7 +9,7 @@ function Logout() {
   const navigate = useNavigate();
     const handleLogout = async () => {
         try{
-            const response = await axios.post("http://localhost:8000/api/v1/users/logout",{},
+            const response = await api.post("/users/logout",{},
                 {
                     headers: {
                         Authorization: `Bearer ${storedUser.accessToken}`

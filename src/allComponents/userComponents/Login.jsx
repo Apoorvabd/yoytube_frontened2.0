@@ -9,7 +9,7 @@ import { toast } from "react-hot-toast"
 import { useContext } from "react"
 import { DataContext } from "../../Context/UserContext"
 import api from "@/lib/api"
-import axios from "axios"
+
 
 
 function Login(){
@@ -27,7 +27,7 @@ function Login(){
   const onSubmit = async (data) => {
     try {
       console.log("Submitting login", data)
-      const response = await axios.post("http://localhost:8000/api/v1/users/login", data)
+      const response = await api.post("/users/login", data)
       console.log(response.data)
       toast.success(`Welcome back, ${response.data.data.user.fullName}`);
       setUser(response.data.data);

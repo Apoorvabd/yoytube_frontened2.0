@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "../../../Context/UserContext";
-import axios from "axios";
+import api from "../../../lib/api";
 import { useNavigate, useParams } from "react-router-dom";
 
 function DeleteVdo({ videoId }) {
@@ -30,7 +30,7 @@ function DeleteVdo({ videoId }) {
         return;
       }
 
-      await axios.delete(`http://localhost:8000/api/v1/videos/${resolvedVideoId}`, {
+      await api.delete(`/videos/${resolvedVideoId}`, {
         headers: {
           Authorization: `Bearer ${storedUser.accessToken}`,
         },

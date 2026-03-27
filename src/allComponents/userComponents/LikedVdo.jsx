@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { DataContext } from '@/Context/UserContext';
 import Card_for_vd0 from '../vdoComponents/Card_for_vd0';
-import axios from 'axios';
+import api from '../../lib/api';
 import { useNavigate } from 'react-router-dom';
 
 export default function LikedVdo() {
@@ -20,8 +20,8 @@ export default function LikedVdo() {
 
     const fetchLikedVideos = async () => {
         try {
-            const response = await axios.get(
-                `http://localhost:8000/api/v1/likes/videos`
+            const response = await api.get(
+                `/likes/videos`
                 ,{
                     headers: {
                         Authorization: `Bearer ${storedUser.accessToken}`,

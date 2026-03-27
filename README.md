@@ -81,7 +81,7 @@ Create an `.env` (or `.env.local`) file in the root of your `frontend` directory
 
 ```env
 # Example environment variables
-VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_API_BASE_URL=https://youtube-backend-vdcg.onrender.com/api/v1
 # Add any other keys required by your application (e.g., Cloudinary configs, etc.)
 ```
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../lib/api";
 import { useState } from "react";
 
 function Uploadvdo() {
@@ -40,7 +40,7 @@ function Uploadvdo() {
                 return;
             }
 
-            const response = await axios.post("http://localhost:8000/api/v1/videos/", formDataToSend, {
+            const response = await api.post("/videos/", formDataToSend, {
                 headers: {
                     Authorization: `Bearer ${storedUser.accessToken}`,
                     "Content-Type": "multipart/form-data",

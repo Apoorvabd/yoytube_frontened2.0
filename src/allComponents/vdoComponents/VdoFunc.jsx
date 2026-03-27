@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { DataContext } from "@/Context/UserContext";
 import { IoCloseSharp, IoChevronBack } from "react-icons/io5";
-import axios from "axios";
+import api from "../../lib/api";
 import { toast } from "react-hot-toast";
 
 function Vdofunc() {
@@ -16,7 +16,7 @@ function Vdofunc() {
     if (!user?.user?._id) return;
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:8000/api/v1/playlist/user/${user.user._id}`, {
+      const res = await api.get(`/playlist/user/${user.user._id}`, {
         headers: { Authorization: `Bearer ${user.accessToken}` }
       });
       setPlaylists(res.data.data || []);
@@ -30,8 +30,8 @@ function Vdofunc() {
 
   const addVideo = async (playlistId) => {
     try {
-      const res = await axios.patch(
-        `http://localhost:8000/api/v1/playlist/add/${vdoTobeAdded}/${playlistId}`,
+      const res = await api.patch(
+        `/playlist/add/${vdoTobeAdded}/${playlistId}`,
         {},
         { headers: { Authorization: `Bearer ${user.accessToken}` } }
       );

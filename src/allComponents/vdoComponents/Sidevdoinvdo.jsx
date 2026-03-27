@@ -1,5 +1,5 @@
 import Card_for_vd0 from "./Card_for_vd0";
-import axios from "axios";
+import api from "../../lib/api";
 import { useEffect, useState, useContext } from "react";
 import { DataContext } from "../../Context/UserContext";
 
@@ -35,14 +35,11 @@ function Sidevdoinvdo() {
           return;
         }
 
-        const { data } = await axios.get(
-          "http://localhost:8000/api/v1/videos/",
-          {
-            headers: {
-              Authorization: `Bearer ${storedUser.accessToken}`,
-            },
-          }
-        );
+        const { data } = await api.get("/videos/", {
+          headers: {
+            Authorization: `Bearer ${storedUser.accessToken}`,
+          },
+        });
 
         const videosData = data?.data?.videos || [];
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../lib/api";
 import { useEffect ,useState,useContext} from "react";
 import { toast } from "react-hot-toast";
 import { DataContext } from "@/Context/UserContext";
@@ -12,7 +12,7 @@ const user=JSON.parse(localStorage.getItem("user"));
            
 
             try{
-                const res=await axios.get(`http://localhost:8000/api/v1/playlist/user/${user.user._id}`, {
+                const res=await api.get(`/playlist/user/${user.user._id}`, {
                     headers: {
                         Authorization: `Bearer ${user.accessToken}`
                     }

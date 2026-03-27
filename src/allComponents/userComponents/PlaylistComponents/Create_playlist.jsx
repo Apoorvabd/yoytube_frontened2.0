@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import api from "../../../lib/api";
 import { toast } from "react-hot-toast";
 import { DataContext } from "@/Context/UserContext";
 
@@ -15,8 +15,8 @@ function Create_playlist() {
         console.log("Submitting playlist:", newPlaylist); 
             e.preventDefault();
             try {
-                const response = await axios.post(
-                    "http://localhost:8000/api/v1/playlist",
+                const response = await api.post(
+                    "/playlist",
                     {
                         name: newPlaylist.name,
                         description: newPlaylist.description,
