@@ -1,4 +1,5 @@
 import Card_for_vd0 from "./Card_for_vd0";
+import SectionRow from "./SectionRow";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { DataContext } from "../../Context/UserContext";
@@ -10,8 +11,6 @@ function AllVdo() {
   const { videos, setVideos } = ctx;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  console.log("videos in allvdo component", videos);
 
   const sampleVideos = [
     {
@@ -66,42 +65,37 @@ function AllVdo() {
     getallvdo();
   }, []);
 
+  const sortedVideos = [...(videos || [])].sort(
+    (first, second) => new Date(second.createdAt || 0) - new Date(first.createdAt || 0)
+  );
+  const trendingVideos = sortedVideos.slice(0, 8);
+  const recommendedVideos = sortedVideos.slice(4, 12);
+  const recentVideos = sortedVideos.slice(0, 10);
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8fafc_0%,_#eef2ff_35%,_#ffffff_100%)] px-4 py-6 md:px-8 md:py-8">
-      <section className="mx-auto max-w-[1400px] space-y-5 rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur md:p-7">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Video Library</p>
-          <h1 className="mt-2 text-2xl font-black text-slate-900 md:text-3xl">Explore All Videos</h1>
-        </div>
+    <section className="space-y-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#777]">Browse</p>
+        <h2 className="section-title mt-2">Discover</h2>
+      </div>
 
-        {loading && (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">
-            Loading videos...
-          </p>
-        )}
+      {error && <p className="rounded-xl border border-white/10 bg-[#181818] p-4 text-sm text-[#d8d8d8]">{error}</p>}
 
-        {error && (
-          <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-700">
-            {error}
-          </p>
-        )}
+      <SectionRow title="Trending" videos={trendingVideos} loading={loading} />
+      <SectionRow title="Recommended" videos={recommendedVideos} loading={loading} />
+      <SectionRow title="Recently Uploaded" videos={recentVideos} loading={loading} />
 
-        {videos && videos.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {!loading && videos && videos.length > 0 && (
+        <section className="space-y-4">
+          <h3 className="text-xl font-bold tracking-tight text-white">All Videos</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {videos.map((video) => (
               <Card_for_vd0 key={video._id} video={video} />
             ))}
           </div>
-        ) : (
-
-          !loading && (
-            <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">
-              No videos available
-            </p>
-          )
-        )}
-      </section>
-    </div>
+        </section>
+      )}
+    </section>
   );
 }
 

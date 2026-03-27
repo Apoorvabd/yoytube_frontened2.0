@@ -1,154 +1,105 @@
 import React, { useContext } from "react";
-import { FaArrowLeft } from "react-icons/fa";
 import { DataContext } from "../../Context/UserContext";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import api from "@/lib/api";
+import { Button } from "@/allComponents/ui/button";
+import { Input } from "@/allComponents/ui/input";
+import { Label } from "@/allComponents/ui/label";
 
 function Signup() {
   const navigate = useNavigate();
   const { setUser, setSignup } = useContext(DataContext);
-  
+  const [loading, setLoading] = React.useState(false);
 
   const handdleSignup = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
     try {
-      for (const pair of formData.entries()) {
-        console.log("formData entry:", pair[0], pair[1]);
-      }
-
-      // Let the browser set the Content-Type with the proper boundary.
-      const response = await axios.post(
-        "https://youtubebackend-production.up.railway.app/api/v1/users/register",
-        formData
-      );
+      setLoading(true);
+      const response = await api.post("/users/register", formData);
       console.log("Signup successful:", response.data);
       setUser(response.data.data);
-      toast.success(`Welcome, ${response.data.data.fullName}! Your account has been created.`);
+      localStorage.setItem("user", JSON.stringify(response.data.data));
+      toast.success(`Welcome, ${response.data.data.user.fullName}!`);
       setTimeout(() => {
-          navigate("/Dashboard");
-         }, 2000);
-    
-  
-      
+        navigate("/Dashboard");
+      }, 2000);
     } catch (error) {
       console.error("Error during signup:", error);
+      toast.error(error?.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
-    <div className="fixed top-0 right-0 h-screen w-[100vw] md:w-[100vw] bg-white z-50 transition-all duration-500 ease-in-out overflow-y-auto">
-        <div > 
-        <h1 className="text-4xl font-bolder justify-center text-gray-900 w-20 flex items-center bg-white rounded-lg shadow-lg p-2" onClick={()=>setSignup(false)}>
-          <FaArrowLeft className="inline-block mr-2 text-red-600 cursor-pointer " />
-        </h1>
-        </div>        
-        <div className=" flex justify-center h-auto w-full" >
-          
-          <form onSubmit={handdleSignup} className="w-[60%] max-w-md bg-white p-4 mt-2 mb-8 rounded-2xl shadow-2xl space-y-4 animate-fade-up">
-        
-        <h2 className="text-3xl font-bold text-center text-gray-800">
-          Create Account
-        </h2>
+    <div className="fixed inset-0 z-50 min-h-screen w-screen bg-[#0f0f0f] overflow-y-auto flex items-center justify-center p-4">
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4 text-[#b3b3b3] hover:text-white text-xl z-10"
+      >
+        ← Back
+      </button>
 
-        {/* Username */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Username
-          </label>
-          <input
-            name="username"
-            required
-            type="text"
-            placeholder="Enter username"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus-visible:ring-red-400 outline-none transition"
-          />
+      <div className="w-full max-w-md animate-fade-up">
+        <div className="surface-card p-6 md:p-8 space-y-6">
+          <div className="text-center">
+            <p className="text-xs uppercase tracking-[0.24em] text-[#b3b3b3]">Join us</p>
+            <h1 className="mt-2 text-3xl font-black text-white">Create Account</h1>
+            <p className="mt-2 text-sm text-[#b3b3b3]">Start your creative journey</p>
+          </div>
+
+          <form onSubmit={handdleSignup} className="space-y-4">
+            <div>
+              <Label className="text-white">Username</Label>
+              <Input name="username" required type="text" placeholder="Choose a username" className="mt-1" />
+            </div>
+
+            <div>
+              <Label className="text-white">Full Name</Label>
+              <Input name="fullName" required type="text" placeholder="Your name" className="mt-1" />
+            </div>
+
+            <div>
+              <Label className="text-white">Email</Label>
+              <Input name="email" required type="email" placeholder="your@email.com" className="mt-1" />
+            </div>
+
+            <div>
+              <Label className="text-white">Password</Label>
+              <Input name="password" required type="password" placeholder="••••••••" className="mt-1" />
+            </div>
+
+            <div>
+              <Label className="text-white">Profile Picture</Label>
+              <div className="mt-1 border-2 border-dashed border-white/20 rounded-lg p-4 cursor-pointer hover:border-white/40 transition">
+                <input name="avatar" required type="file" className="w-full text-sm text-white file:mr-2 file:rounded-lg file:border-0 file:bg-[#E50914] file:text-white file:font-semibold" />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-white">Cover Image</Label>
+              <div className="mt-1 border-2 border-dashed border-white/20 rounded-lg p-4 cursor-pointer hover:border-white/40 transition">
+                <input name="cover" required type="file" className="w-full text-sm text-white file:mr-2 file:rounded-lg file:border-0 file:bg-[#E50914] file:text-white file:font-semibold" />
+              </div>
+            </div>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Creating..." : "Sign Up"}
+            </Button>
+          </form>
+
+          <div className="text-center text-sm text-[#b3b3b3]">
+            Already have an account?{" "}
+            <button onClick={() => navigate("/login")} className="text-[#E50914] font-semibold hover:underline">
+              Sign in
+            </button>
+          </div>
         </div>
-
-        {/* Full Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Full Name
-          </label>
-          <input
-            name="fullName"
-            required
-            type="text"
-            placeholder="Enter full name"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus-visible:ring-red-400 outline-none transition"
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Email
-          </label>
-          <input
-            name="email"
-            required
-            type="email"
-            placeholder="Enter email"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus-visible:ring-red-400 outline-none transition"
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Password
-          </label>
-          <input
-            name="password"
-            required
-            type="password"
-            placeholder="Enter password"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus-visible:ring-red-400 outline-none transition"
-          />
-        </div>
-
-        {/* Avatar Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Avatar
-          </label>
-          <input
-            name="avatar"
-            required
-            type="file"
-            className="w-full mt-1 text-sm"
-          />
-        </div>
-
-        {/* Cover Image Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Cover Image
-          </label>
-          <input
-            name="cover"
-            required
-            type="file"
-            className="w-full mt-1 text-sm"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <button type="submit" className="w-full theme-accent py-2 rounded-lg hover:opacity-95 transition font-semibold">
-          Sign Up
-        </button>
-
-          <p className="text-center text-sm text-gray-500">
-          Already have an account?{" "}
-          <span className="text-red-600 cursor-pointer hover:underline" onClick={()=>navigate("/login")}>
-            Login
-          </span>
-        </p>
-
-             </form>
-        </div>
+      </div>
     </div>
   );
 }

@@ -40,7 +40,7 @@ function Uploadvdo() {
                 return;
             }
 
-            const response = await axios.post("https://youtubebackend-production.up.railway.app/api/v1/videos/", formDataToSend, {
+            const response = await axios.post("http://localhost:8000/api/v1/videos/", formDataToSend, {
                 headers: {
                     Authorization: `Bearer ${storedUser.accessToken}`,
                     "Content-Type": "multipart/form-data",

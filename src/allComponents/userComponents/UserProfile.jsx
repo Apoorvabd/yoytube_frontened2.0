@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import Card_for_vd0 from "../vdoComponents/Card_for_vd0";
+import api, { getAuthHeaders, getStoredUser } from "@/lib/api";
 
 function UserProfile() {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const [channel, setChannel] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -14,17 +13,17 @@ function UserProfile() {
   const [subscribing, setSubscribing] = useState(false);
 
   // localStorage shape: { user: { _id, fullName, ... }, accessToken, refreshToken }
-  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedUser = getStoredUser();
   const accessToken = storedUser?.accessToken;
 
   // ── Fetch channel details ────────────────────────────────────────────────
   const fetchChannelDetails = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/users/channel/${id}`,
+      const res = await api.get(
+        `/users/channel/${id}`,
         accessToken
-          ? { headers: { Authorization: `Bearer ${accessToken}` } }
+          ? { headers: getAuthHeaders() }
           : {}
       );
       setChannel(res.data.data);
@@ -39,10 +38,10 @@ function UserProfile() {
   // ── Fetch channel's videos ───────────────────────────────────────────────
   const fetchChannelVideos = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/videos?userId=${id}`,
+      const res = await api.get(
+        `/videos?userId=${id}`,
         accessToken
-          ? { headers: { Authorization: `Bearer ${accessToken}` } }
+          ? { headers: getAuthHeaders() }
           : {}
       );
       // Backend returns: { data: { videos: [...], page, totalVideos, ... } }
@@ -69,10 +68,10 @@ function UserProfile() {
     }
     try {
       setSubscribing(true);
-      await axios.post(
-        `http://localhost:8000/api/v1/subscriptions/c/${id}`,
+      await api.post(
+        `/subscriptions/c/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        { headers: getAuthHeaders() }
       );
       setChannel((prev) => ({
         ...prev,
@@ -109,6 +108,13 @@ function UserProfile() {
     const months = Math.floor(days / 30);
     return `${months}mo ago`;
   };
+
+  const shareProfile =()=>{
+    const profileUrl = `${window.location.origin}/channel/${id}`;
+    navigator.clipboard.writeText(profileUrl)
+      .then(() => toast.success("Profile URL copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy URL"));
+  }
 
   // ── Loading state ────────────────────────────────────────────────────────
   if (loading) {
@@ -170,11 +176,13 @@ function UserProfile() {
                   {formatViews(channel.subscribersCount)}
                 </span>{" "}
                 subscribers ·{" "}
+                
                 <span className="text-zinc-300 font-medium">
                   {formatViews(channel.channelsSubscribedToCount)}
                 </span>{" "}
                 subscribed
               </p>
+              
             </div>
 
             {/* Subscribe Button */}
@@ -196,6 +204,7 @@ function UserProfile() {
                 : "Subscribe"}
             </button>
           </div>
+          <button className={`shrink-0 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white`} onClick={()=>shareProfile()}>share profile</button>
         </div>
 
         {/* Divider */}

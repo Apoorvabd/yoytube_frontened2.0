@@ -1,13 +1,10 @@
-import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import api, { getAuthHeaders } from "@/lib/api";
 
 function ChangePassword() {
   const navigate = useNavigate();
-  
-  const storedUser = JSON.parse(localStorage.getItem("user"));
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -29,10 +26,10 @@ function ChangePassword() {
     setMessage({ text: "", type: "" });
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/v1/users/changepass",
+      const response = await api.post(
+        "/users/changepass",
         { oldPassword, newPassword },
-        { headers: { Authorization: `Bearer ${storedUser?.accessToken}` } }
+        { headers: getAuthHeaders() }
       );
       console.log("Change password response:", response);
       setMessage({ text: "Password changed successfully!", type: "success" });

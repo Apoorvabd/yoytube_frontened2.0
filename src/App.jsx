@@ -1,7 +1,6 @@
 import React from "react";
 import Login from "./allComponents/userComponents/Login";
 import Hero from "./allComponents/userComponents/Hero";
-import { Card } from "./allComponents/ui/card";
 import Sigup from "./allComponents/userComponents/Sigup";
 import { useContext } from "react";
 import { DataContext } from "./Context/UserContext";
@@ -13,7 +12,6 @@ import UserDashboard from "./allComponents/userComponents/UserDashboard";
 import Uploadvdo from "./allComponents/userComponents/Uploadvdo";
 import Showvdo from "./allComponents/vdoComponents/Showvdo";
 import { useParams } from "react-router-dom";
-import VdoComments from "./allComponents/vdoComponents/Vdocomments";
 import Playlist from "./allComponents/userComponents/PlaylistComponents/Playlist";
 import SubscribedChannel from "./allComponents/userComponents/SubcribedChannel";
 import UserProfile from "./allComponents/userComponents/UserProfile";
@@ -25,6 +23,7 @@ import UpdateProfile from "./allComponents/userComponents/settingsForUser/Update
 import LikedVdo from "./allComponents/userComponents/LikedVdo";
 import WatchHistory from "./allComponents/userComponents/Watchhistory";
 import Subscribers from "./allComponents/userComponents/Subscribers";
+import DeleteVdo from "./allComponents/vdoComponents/VdoFunctions/DeleteVdo";
 
 // wrapper that keys Showvdo by id so it fully remounts when the parameter changes
 function VideoWrapper() {
@@ -35,9 +34,7 @@ function VideoWrapper() {
 
 export default function App() {
   const ctx = useContext(DataContext);
-  const vdoFunc =useContext(DataContext);
   if (!ctx) return null;
-  const { sigup, login } = ctx;
 
   return (
     <BrowserRouter>
@@ -54,8 +51,8 @@ export default function App() {
         < Route path="/settings" element={<UsersSettings />} />
         < Route path="/settings/privacy" element={<PrivacyPolicy />} />
         <Route path="/settings/help" element={<Help/>}/>
-        <Route path="settings/accountcenter" element={<AccountCenter/>}/>
-        <Route path="settings/accountcenter/updateprofile" element={<UpdateProfile/>}/>
+        <Route path="/settings/accountcenter" element={<AccountCenter/>}/>
+        <Route path="/settings/accountcenter/updateprofile" element={<UpdateProfile/>}/>
         {/* wrap Showvdo in a wrapper with key so it remounts when id changes */}
         <Route
           path="/videos/:id"
@@ -64,6 +61,7 @@ export default function App() {
         <Route path="/likedvideos" element={<LikedVdo/>}/>
         <Route path="/history" element={<WatchHistory/>}/>
         <Route path="/subscribers" element={<Subscribers/>}/>
+        <Route path="/deletevideo/:id" element={<DeleteVdo/>}/>
         </Routes>
        <Toaster position="top-right" />
 

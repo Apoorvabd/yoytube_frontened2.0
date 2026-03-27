@@ -64,29 +64,31 @@ function Sidevdoinvdo() {
     getallvdo();
   }, []);
 
+  const recommended = (videos || []).slice(0, 8);
+
   return (
     <section className="space-y-3">
       {loading && (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">
-          Loading videos...
-        </p>
-      )}
-
-      {error && (
-        <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-700">
-          {error}
-        </p>
-      )}
-
-      {videos && videos.length > 0 ? (
         <div className="space-y-3">
-          {videos.map((video) => (
-            <Card_for_vd0 key={video._id} video={video} />
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="h-24 rounded-xl shimmer" />
+          ))}
+        </div>
+      )}
+
+      {!loading && error && (
+        <p className="rounded-xl border border-white/10 bg-[#181818] p-3 text-sm text-[#d8d8d8]">{error}</p>
+      )}
+
+      {!loading && recommended.length > 0 ? (
+        <div className="space-y-3">
+          {recommended.map((video) => (
+            <Card_for_vd0 key={video._id} video={video} compact />
           ))}
         </div>
       ) : (
         !loading && (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">
+          <p className="rounded-xl border border-dashed border-white/10 bg-[#181818] p-3 text-center text-sm text-[#b3b3b3]">
             No videos available
           </p>
         )

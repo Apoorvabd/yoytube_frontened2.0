@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
+import api from "@/lib/api";
 
 function SubscribedChannel() {
 
   const [subscribedChannel, setSubscribedChannel] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const storedUser = useMemo(() => JSON.parse(localStorage.getItem("user")), []);
   // localStorage shape from Login.jsx: { user: { _id, fullName, ... }, accessToken, refreshToken }
@@ -14,8 +16,8 @@ function SubscribedChannel() {
   useEffect(() => {
     const fetchSubscribedChannels = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/api/v1/subscriptions/u/${userId}`,
+        const response = await api.get(
+          `/subscriptions/u/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -24,10 +26,14 @@ function SubscribedChannel() {
         );
 
         setSubscribedChannel(response.data.data);
+        setError("");
 
       } catch (err) {
         console.error(err);
+        setError("Failed to load subscribed channels");
         toast.error("Failed to load subscribed channels");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -40,6 +46,9 @@ function SubscribedChannel() {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Subscribed Channels</h2>
+
+      {loading && <p className="text-sm text-gray-600 mb-3">Loading channels...</p>}
+      {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
 
       {subscribedChannel.length === 0 ? (
         <p>You are not subscribed to any channels.</p>

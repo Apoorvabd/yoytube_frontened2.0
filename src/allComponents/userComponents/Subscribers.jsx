@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "@/lib/api";
 
 
 function Subscribers(){
 
     const [subscribers, setSubscribers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const channelId = storedUser?.user?._id;
     const accessToken = storedUser?.accessToken;
@@ -15,7 +17,7 @@ function Subscribers(){
            
 
             try {
-                const response = await axios.get(`http://localhost:8000/api/v1/subscriptions/c/${channelId}`, {
+                const response = await api.get(`/subscriptions/c/${channelId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -25,10 +27,14 @@ function Subscribers(){
 
                 const subscriberList = Array.isArray(response.data?.data) ? response.data.data : [];
                 setSubscribers(subscriberList);
+                setError("");
                 console.log("Fetched subscribers:", subscriberList);
             } catch (error) {
                 console.log("Error fetching subscribers:", error);
                 setSubscribers([]);
+                setError("Failed to load subscribers");
+            } finally {
+                setLoading(false);
             }
         };
         if (channelId) {
@@ -39,6 +45,9 @@ function Subscribers(){
     return (
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">Subscribers</h2>
+
+            {loading && <p className="text-sm text-gray-600 mb-3">Loading subscribers...</p>}
+            {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
 
             {(Array.isArray(subscribers) ? subscribers : []).length === 0 ? (
                 <p>No subscribers yet.</p>

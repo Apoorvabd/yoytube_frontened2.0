@@ -1,35 +1,60 @@
 import React, { useState } from "react";
-import axios from "axios";
+import toast from "react-hot-toast";
+import api, { getAuthHeaders, getStoredUser } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 function UpdateProfile() {
-  const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+  const navigate = useNavigate();
+  const storedUser = getStoredUser() || {};
 
-  const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState(storedUser?.user?.email || "");
+  const [fullName, setFullName] = useState(storedUser?.user?.fullName || "");
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [coverLoading, setCoverLoading] = useState(false);
 
   // ================= DETAILS =================
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
+    if (!fullName.trim() || !email.trim()) {
+      toast.error("Full name and email are required");
+      return;
+    }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/v1/users/updateProfile",
+      setDetailsLoading(true);
+      const response = await api.post(
+        "/users/updateProfile",
         { fullName, email },
         {
-          headers: {
-            Authorization: `Bearer ${storedUser?.accessToken}`,
-          },
+          headers: getAuthHeaders(),
         }
       );
+
+      const updatedUser = response.data?.data;
+      if (updatedUser && storedUser?.accessToken) {
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...storedUser,
+            user: {
+              ...storedUser.user,
+              ...updatedUser,
+            },
+          })
+        );
+      }
 
       toast.success("Profile updated successfully ✅");
       console.log(response.data);
     } catch (err) {
       console.log(err);
-      toast("Error updating profile ❌");
+      toast.error(err?.response?.data?.message || "Error updating profile ❌");
+    } finally {
+      setDetailsLoading(false);
     }
   };
 
@@ -39,29 +64,33 @@ function UpdateProfile() {
 
     try {
       if (!avatarFile) {
-        alert("Select avatar first");
+        toast.error("Select avatar first");
         return;
       }
 
       const formData = new FormData();
       formData.append("avatar", avatarFile);
 
-      const response = await axios.patch(
-        "http://localhost:8000/api/v1/users/updateavatar",
+      setAvatarLoading(true);
+      const response = await api.patch(
+        "/users/updateavatar",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${storedUser?.accessToken}`,
+            ...getAuthHeaders(),
             "Content-Type": "multipart/form-data",
           },
         }
       );
 
-      alert("Avatar updated ✅");
+      toast.success("Avatar updated ✅");
+      setAvatarFile(null);
       console.log(response.data);
     } catch (err) {
       console.log(err);
-      alert("Error updating avatar ❌");
+      toast.error(err?.response?.data?.message || "Error updating avatar ❌");
+    } finally {
+      setAvatarLoading(false);
     }
   };
 
@@ -71,29 +100,33 @@ function UpdateProfile() {
 
     try {
       if (!coverFile) {
-        alert("Select cover image first");
+        toast.error("Select cover image first");
         return;
       }
 
       const formData = new FormData();
       formData.append("coverImage", coverFile);
 
-      const response = await axios.patch(
-        "http://localhost:8000/api/v1/users/updatecover",
+      setCoverLoading(true);
+      const response = await api.patch(
+        "/users/updatecover",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${storedUser?.accessToken}`,
+            ...getAuthHeaders(),
             "Content-Type": "multipart/form-data",
           },
         }
       );
 
-      alert("Cover updated ✅");
+      toast.success("Cover updated ✅");
+      setCoverFile(null);
       console.log(response.data);
     } catch (err) {
       console.log(err);
-      alert("Error updating cover ❌");
+      toast.error(err?.response?.data?.message || "Error updating cover ❌");
+    } finally {
+      setCoverLoading(false);
     }
   };
 
@@ -102,6 +135,13 @@ function UpdateProfile() {
       <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-8 space-y-10">
 
         <h2 className="text-3xl font-bold text-center">Update Profile</h2>
+        <button
+          type="button"
+          className="w-fit rounded-md border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </button>
 
         {/* ================= DETAILS FORM ================= */}
         <form onSubmit={handleDetailsSubmit} className="space-y-4">
@@ -123,8 +163,8 @@ function UpdateProfile() {
             className="w-full border rounded-lg px-4 py-2"
           />
 
-          <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800">
-            Update Details
+          <button disabled={detailsLoading} className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 disabled:opacity-60">
+            {detailsLoading ? "Updating..." : "Update Details"}
           </button>
         </form>
 
@@ -139,8 +179,8 @@ function UpdateProfile() {
             className="w-full border rounded-lg px-4 py-2"
           />
 
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-            Upload Avatar
+          <button disabled={avatarLoading} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-60">
+            {avatarLoading ? "Uploading..." : "Upload Avatar"}
           </button>
         </form>
 
@@ -155,8 +195,8 @@ function UpdateProfile() {
             className="w-full border rounded-lg px-4 py-2"
           />
 
-          <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
-            Upload Cover
+          <button disabled={coverLoading} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-60">
+            {coverLoading ? "Uploading..." : "Upload Cover"}
           </button>
         </form>
 

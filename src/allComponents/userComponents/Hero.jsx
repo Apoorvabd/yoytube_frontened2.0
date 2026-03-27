@@ -1,87 +1,61 @@
-import React from "react";
-import Navbar from "./Navbar";
-import Card_for_vd0 from "../vdoComponents/Card_for_vd0";
+import React, { useState, useEffect } from "react";
+import AppShell from "../layout/AppShell";
 import AllVdo from "../vdoComponents/AllVdo";
-import UserDashboard from "./UserDashboard";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 function Hero() {
+  const navigate = useNavigate();
+  const [featured, setFeatured] = useState(null);
+
+  useEffect(() => {
+    setFeatured({
+      title: "Welcome to NAVYA EAKSHAN",
+      description: "Create, share, and explore amazing videos with our premium platform.",
+      image: "/hero.png",
+    });
+  }, []);
 
   return (
-    <div className="w-full min-h-screen bg-white z-10">
-      
-      
-      {/* Navbar */}
-      <Navbar />
+    <AppShell>
+      {/* Hero Banner */}
+      {featured && (
+        <section className="surface-glass relative h-[360px] overflow-hidden md:h-[480px]">
+          <img
+            src={featured.image}
+            alt="Featured"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-hero" />
 
-      {/* Hero Section */}
-      <section id="Home" className="relative h-[30%] bg-gradient-to-r from-red-600 to-red-400 text-white">
-        <div className="container mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-10">
-
-          
-          {/* Left Content */}
-          <div className="flex-1 text-center md:text-left animate-fade-up">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Welcome to <span className="text-red-100">नव्य ईक्षण</span>
+          <div className="relative flex h-full flex-col items-start justify-end p-6 md:p-10">
+            <h1 className="max-w-2xl text-4xl font-black leading-tight text-white md:text-5xl">
+              {featured.title}
             </h1>
-            <p className="text-lg mb-6 text-red-100/90">
-              Create, share and explore amazing videos — now with a bold white & red theme.
-            </p>
-
-            
-          </div>
-
-          {/* Right Side (Video with image fallback) */}
-          <div className="flex-1 flex justify-center items-center">
-            <div className="w-full max-w-lg mx-auto rounded-xl shadow-2xl overflow-hidden border-2 border-red-50">
-              <video
-                className="w-full h-full object-cover"
-                src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster="/hero.jfif"
+            <p className="mt-4 max-w-xl text-lg leading-7 text-[#d8d8d8]">{featured.description}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="accent-btn inline-flex items-center gap-2"
               >
-                Your browser does not support the video tag.
-              </video>
+                Get Started <ArrowRight size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/Upload")}
+                className="rounded-xl border border-white/20 bg-white/10 px-6 py-2.5 font-semibold text-white transition hover:bg-white/20"
+              >
+                Upload Now
+              </button>
             </div>
           </div>
-        </div>
-      </section>
-      {/* Video Cards Section */}
+        </section>
+      )}
+
+      {/* All Videos Grid */}
       <AllVdo />
-      <section id="About" className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold mb-6 text-center">About नव्य ईक्षण</h2>
-          <p className="text-lg text-gray-700 mb-4">
-            नव्य ईक्षण is a video sharing platform built with React and Shadcn UI. It allows users to create, share, and explore amazing videos. Whether you're a content creator or just looking for some great videos to watch, नव्य ईक्षण has something for everyone.
-          </p>
-          <p className="text-lg text-gray-700">
-
-            Join our community today and start sharing your creativity with the world!
-          </p>
-        </div>
-
-      </section>
-      <section id="Contact" className="py-20 bg-gradient-to-r from-red-600 to-red-400 text-white hover:bg-gradient-to-r hover:from-red-700 hover:to-red-500 transition-all">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold mb-6 text-center text-white">Contact Us</h2>
-          <p className="text-lg mb-8 text-center text-red-50">
-            Have questions or feedback? We'd love to hear from you! Reach out to us at <a href="mailto:mrapoorvchaturvedi7@gmail.com" className="text-black font-semibold hover:underline transition-all">mrapoorvchaturvedi7@gmail.com</a>
-          </p>
-          <p className="text-lg text-center text-yellow-500 font-bold mb-8">Follow us on social media</p>
-          <div className="flex justify-center gap-8 mt-6 flex-wrap">
-            <a href="https://twitter.com/apoorvchaturvedi" className="bg-white text-red-600 font-bold px-6 py-3 rounded-lg hover:bg-red-50 transition-all shadow-lg">Twitter</a>
-            <a href="https://facebook.com/apoorvchaturvedi" className="bg-white text-red-600 font-bold px-6 py-3 rounded-lg hover:bg-red-50 transition-all shadow-lg">Facebook</a>
-            <a href="https://instagram.com/apoorvchaturvedi" className="bg-white text-red-600 font-bold px-6 py-3 rounded-lg hover:bg-red-50 transition-all shadow-lg">Instagram</a>
-          </div>
-        </div>
-        <div className="text-center mt-12 text-red-100 text-sm">
-          &copy; {new Date().getFullYear()} नव्य ईक्षण. All rights reserved.
-        </div>  
-      </section>
-
-    </div>
+    </AppShell>
   );
 }
 
