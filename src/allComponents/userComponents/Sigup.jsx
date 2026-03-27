@@ -16,13 +16,18 @@ function Signup() {
     e.preventDefault();
 
     const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
     try {
       setLoading(true);
-      const response = await api.post("/users/register", formData);
-      console.log("Signup successful:", response.data);
-      setUser(response.data.data);
-      localStorage.setItem("user", JSON.stringify(response.data.data));
-      toast.success(`Welcome, ${response.data.data.user.fullName}!`);
+      const registerResponse = await api.post("/users/register", formData);
+      console.log("Signup successful:", registerResponse.data);
+
+      // Keep user state shape same as Login flow: { user, accessToken, refreshToken }
+      const loginResponse = await api.post("/users/login", { email, password });
+      setUser(loginResponse.data.data);
+      localStorage.setItem("user", JSON.stringify(loginResponse.data.data));
       setTimeout(() => {
         navigate("/Dashboard");
       }, 2000);
