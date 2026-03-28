@@ -9,9 +9,17 @@ function Navbar({ onSearch }) {
   const storedUser = useMemo(() => getStoredUser(), []);
   const avatar = storedUser?.user?.avatar;
 
-  const submitSearch = (event) => {
+  const submitSearch = async (event) => {
     event.preventDefault();
     onSearch?.(query.trim());
+    try{
+      const response=await api.get(`/videos/search?q=${encodeURIComponent(query.trim())}`);
+      console.log("Search results:", response.data);
+
+    }
+    catch(error){
+      console.error("Search error:", error);
+    }
   };
 
   return (
