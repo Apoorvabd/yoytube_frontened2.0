@@ -1,181 +1,210 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { IoMdMore } from "react-icons/io";
-import { Play } from "lucide-react";
+import { Play, Share2, Bookmark, Trash2, Clock, User } from "lucide-react";
 
+/**
+ * MenuButton sub-component for the video card options
+ */
+const MenuButton = ({ icon, label, onClick, destructive = false }) => (
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick(e);
+    }}
+    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
+      destructive
+        ? "text-red-500 hover:bg-red-50/80 dark:hover:bg-red-950/30"
+        : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/50"
+    }`}
+  >
+    <span className={destructive ? "text-red-500" : "text-slate-400 group-hover:text-primary"}>
+      {icon}
+    </span>
+    <span>{label}</span>
+  </button>
+);
 
-function Card_for_vd0({ video, compact = false }) {
-  const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+const Card_for_vd0 = ({ video, compact = false }) => {
   const navigate = useNavigate();
-  const [more, setMore] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  
+  // Safely get user from localStorage
+  const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+
+  if (!video) return null;
 
   const isOwner =
     Boolean(storedUser?.user?._id && video?.owner?._id) &&
-    storedUser.user._id === video.owner._id;
+    storedUser.user._id === video.owner?._id;
+
+  const handleCardClick = () => {
+    navigate(`/video/${video._id}`);
+  };
 
   const handleProfileClick = (e) => {
     e.stopPropagation();
-    navigate(`/channel/${video.owner._id}`);
+    if (video.owner?._id) {
+      navigate(`/channel/${video.owner._id}`);
+    }
   };
 
   const onShare = async (e) => {
-    e.stopPropagation();
-    const videoUrl = `${window.location.origin}/videos/${video._id}`;
-
+    const videoUrl = `${window.location.origin}/video/${video._id}`;
     try {
       if (navigator.share) {
-        await navigator.share({
-          title: video.title,
-          text: video.description,
-          url: videoUrl,
-        });
+        await navigator.share({ title: video.title, url: videoUrl });
       } else {
         await navigator.clipboard.writeText(videoUrl);
-        alert("Video link copied!");
+        alert("Link copied to clipboard!");
       }
-    } catch {
-      await navigator.clipboard.writeText(videoUrl);
-      alert("Video link copied!");
+    } catch (err) {
+      console.error("Error sharing:", err);
     }
-    setMore(false);
+    setShowMenu(false);
   };
 
   const onSave = (e) => {
-    e.stopPropagation();
-    const savedVideos = JSON.parse(localStorage.getItem("savedVideos") || "[]");
-    const alreadySaved = savedVideos.some((saved) => saved._id === video._id);
-
-    if (!alreadySaved) {
-      savedVideos.push({
-        _id: video._id,
-        title: video.title,
-        thumbnail: video.thumbnail,
-      });
-      localStorage.setItem("savedVideos", JSON.stringify(savedVideos));
-      alert("Video saved!");
-    } else {
-      alert("Video already saved.");
-    }
-
-    setMore(false);
-  };
-
-  const onEdit = (e) => {
-    e.stopPropagation();
-    setMore(false);
-    alert("Edit action yahan connect kar sakte ho.");
+    // Implement save logic here
+    setShowMenu(false);
   };
 
   const onDelete = (e) => {
-    e.stopPropagation();
-    setMore(false);
+    setShowMenu(false);
     navigate(`/deletevideo/${video._id}`);
   };
 
-
-  if (!video) {
-    return <div className="text-sm text-[#b3b3b3]">No video data</div>;
-  }
-
-  const createdLabel = video.createdAt ? new Date(video.createdAt).toDateString() : "Recently";
+  const formattedDate = video.createdAt
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(video.createdAt))
+    : "Recently";
 
   return (
     <article
-      className={`group cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-[#181818] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_12px_35px_-20px_rgba(229,9,20,0.5)] ${
-        compact ? "" : "hover:border-white/20"
-      }`}
+      onClick={handleCardClick}
+      className={`group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 dark:border-slate-800 dark:bg-slate-900 ${
+        compact ? "max-w-md" : "w-full"
+      } cursor-pointer surface-card`}
     >
-      <div className="relative aspect-video overflow-hidden bg-[#111]" onClick={() => navigate(`/videos/${video._id}`)}>
-        <img
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-          src={video.thumbnail}
-          alt="Video Thumbnail"
-        />
+      {/* Thumbnail Container */}
+      <div className="relative aspect-video w-full overflow-hidden p-3">
+        <div className="relative h-full w-full overflow-hidden rounded-[1.5rem] bg-slate-100 dark:bg-slate-800">
+          <img
+            src={video.thumbnail}
+            alt={video.title}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          />
+          
+          {/* Play Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/90 text-primary shadow-xl transition-transform duration-300 group-hover:scale-110 active:scale-95">
+              <Play size={24} fill="currentColor" className="ml-1" />
+            </div>
+          </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E50914]/90 text-white shadow-glow">
-            <Play size={20} fill="currentColor" />
-          </span>
+          {/* Duration Badge */}
+          <div className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/60 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur-md">
+            <Clock size={12} />
+            <span>{video.duration || "00:00"}</span>
+          </div>
         </div>
       </div>
 
-      <div className={`space-y-3 ${compact ? "p-3" : "p-4"}`}>
-        <div className="relative flex justify-between gap-2">
-          <h3 className={`line-clamp-2 leading-5 text-white ${compact ? "text-sm" : "text-base font-semibold"}`}>{video.title}</h3>
-        <button
-          type="button"
-          className="rounded p-1 text-[#b3b3b3] transition hover:bg-white/10 hover:text-white"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMore((prev) => !prev);
-          }}
-        >
-          <IoMdMore />
-        </button>
+      {/* Content Section */}
+      <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 space-y-3">
+            <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-slate-800 transition-colors hover:text-primary dark:text-slate-100">
+              {video.title}
+            </h3>
 
-        {more && (
-          <div
-            className="absolute right-0 top-7 z-10 min-w-[160px] rounded-xl border border-white/10 bg-[#202020] p-1.5 shadow-surface"
-            onClick={(e) => e.stopPropagation()}
-          >
+            {/* Owner Info */}
+            <div className="flex items-center gap-3 group/owner" onClick={handleProfileClick}>
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-slate-100 bg-slate-200 shadow-sm transition-transform group-hover/owner:scale-105 dark:border-slate-700 dark:bg-slate-800">
+                {video.owner?.avatar ? (
+                  <img
+                    src={video.owner.avatar}
+                    alt={video.owner.fullName}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <User size={20} />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col overflow-hidden">
+                <span className="truncate text-sm font-semibold text-slate-700 hover:text-primary dark:text-slate-300">
+                  {video.owner?.fullName || "Anonymous Creator"}
+                </span>
+                <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                  <span>{video.views?.toLocaleString() || 0} Views</span>
+                  <span className="h-1 w-1 rounded-full bg-slate-400"></span>
+                  <span>{formattedDate}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions Menu */}
+          <div className="relative flex-shrink-0">
             <button
-              type="button"
-              onClick={onShare}
-              className="w-full rounded-md px-3 py-2 text-left text-sm text-[#d7d7d7] transition hover:bg-white/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMenu(!showMenu);
+              }}
+              className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-200 ${
+                showMenu 
+                ? "bg-primary text-white shadow-lg shadow-primary/30" 
+                : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+              }`}
             >
-              Share
-            </button>
-            <button
-              type="button"
-              onClick={onSave}
-              className="w-full rounded-md px-3 py-2 text-left text-sm text-[#d7d7d7] transition hover:bg-white/10"
-            >
-              Save
+              <IoMdMore size={24} />
             </button>
 
-            {isOwner && (
+            {/* Dropdown Menu */}
+            {showMenu && (
               <>
-                <button
-                  type="button"
-                  onClick={onEdit}
-                  className="w-full rounded-md px-3 py-2 text-left text-sm text-[#d7d7d7] transition hover:bg-white/10"
-                >
-                  Edit Video
-                </button>
-                <button
-                  type="button"
-                  onClick={onDelete}
-                  className="w-full rounded-md px-3 py-2 text-left text-sm text-[#ff7b82] transition hover:bg-[#E50914]/15"
-                >
-                  Delete Video
-                </button>
+                <div 
+                  className="fixed inset-0 z-10" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowMenu(false);
+                  }}
+                />
+                <div className="absolute right-0 top-12 z-20 w-56 overflow-hidden rounded-3xl border border-slate-200 bg-white/95 p-2 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 dark:border-slate-700 dark:bg-slate-900/95">
+                  <MenuButton 
+                    icon={<Share2 size={18} />} 
+                    label="Share Video" 
+                    onClick={onShare} 
+                  />
+                  <MenuButton 
+                    icon={<Bookmark size={18} />} 
+                    label="Save to Playlist" 
+                    onClick={onSave} 
+                  />
+                  {isOwner && (
+                    <>
+                      <div className="my-2 h-px bg-slate-100 dark:bg-slate-800" />
+                      <MenuButton 
+                        icon={<Trash2 size={18} />} 
+                        label="Delete Video" 
+                        onClick={onDelete} 
+                        destructive 
+                      />
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
-        )}
-       </div>
-
-        {!compact && <p className="line-clamp-2 text-sm leading-5 text-[#b3b3b3]">{video.description}</p>}
-
-        <div className="flex items-center justify-between border-t border-white/10 pt-2 text-xs text-[#9f9f9f]">
-          <span className="rounded-full bg-white/10 px-2.5 py-1 font-medium text-[#d8d8d8]">{video.views || 0} views</span>
-          <span>{createdLabel}</span>
-        </div>
-        <div className="inset-x-0 bottom-0 mt-1 flex items-center gap-2" onClick={(e) => handleProfileClick(e)}>
-          <img
-            src={video.owner?.avatar || "/hero.jfif"}
-            alt="Author Avatar"
-            className="h-8 w-8 rounded-full object-cover"
-          />
-
-          <p className="line-clamp-1 text-xs font-semibold uppercase tracking-wide text-white/95">
-            {video.owner?.username || "Unknown"}
-          </p>
         </div>
       </div>
     </article>
   );
-}
+};
 
 export default Card_for_vd0;

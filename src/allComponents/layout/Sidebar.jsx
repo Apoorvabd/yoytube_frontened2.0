@@ -1,76 +1,85 @@
-import { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  PanelLeftClose,
-  PanelLeftOpen,
-  House,
-  LayoutDashboard,
-  Upload,
-  Heart,
+  Home,
+  Compass,
+  Play,
+  PlusCircle,
   History,
-  ListVideo,
-  Users,
+  Heart,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { getStoredUser } from "@/lib/api";
 
+// Navigation links config
 const links = [
-  { label: "Home", to: "/", icon: House },
-  { label: "Dashboard", to: "/Dashboard", icon: LayoutDashboard },
-  { label: "Upload", to: "/Upload", icon: Upload },
-  { label: "Liked", to: "/likedvideos", icon: Heart },
+  { label: "Home", to: "/", icon: Home },
+  { label: "Explore", to: "/explore", icon: Compass },
+  { label: "Subscriptions", to: "/subscriptions", icon: Play },
+  { label: "Upload", to: "/upload", icon: PlusCircle },
+  { label: "Liked", to: "/liked-videos", icon: Heart },
   { label: "History", to: "/history", icon: History },
-  { label: "Playlist", to: "/Playlist", icon: ListVideo },
-  { label: "Channels", to: "/subscribedchannels", icon: Users },
+  { label: "Settings", to: "/settings", icon: Settings },
 ];
 
-function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
-  const storedUser = useMemo(() => getStoredUser(), []);
+const Sidebar = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <aside
-      className={`sticky top-[77px] hidden h-[calc(100vh-94px)] self-start rounded-2xl border border-white/10 bg-[#181818] p-3 shadow-surface transition-all duration-300 lg:block ${
-        collapsed ? "w-[88px]" : "w-[250px]"
+      className={`relative flex flex-col h-screen bg-card border-r border-border transition-all duration-300 ease-in-out px-4 py-6 rounded-r-[2rem] shadow-sm ${
+        isCollapsed ? "w-24" : "w-72"
       }`}
     >
-      <div className="mb-4 flex items-center justify-between px-1">
-        {!collapsed && <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#777]">Browse</p>}
-        <button
-          type="button"
-          onClick={() => setCollapsed((prev) => !prev)}
-          className="rounded-lg border border-white/10 p-1.5 text-[#b3b3b3] transition hover:text-white"
-        >
-          {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-        </button>
-      </div>
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-10 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-primary hover:bg-muted transition-colors shadow-sm z-10"
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+      </button>
 
-      <nav className="space-y-1.5">
-        {links.map(({ label, to, icon: Icon }) => (
+      {/* Navigation List */}
+      <nav className="flex flex-col gap-2 mt-8">
+        {links.map((link) => (
           <NavLink
-            key={label}
-            to={to}
+            key={link.to}
+            to={link.to}
             className={({ isActive }) =>
-              `group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300 ${
+              `flex items-center gap-4 p-3 rounded-2xl transition-all duration-200 group ${
                 isActive
-                  ? "bg-[#E50914]/20 text-white shadow-[0_0_22px_rgba(229,9,20,0.28)]"
-                  : "text-[#b3b3b3] hover:bg-white/5 hover:text-white"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`
             }
           >
-            <Icon size={18} />
-            {!collapsed && <span>{label}</span>}
+            <link.icon
+              size={22}
+              className={`shrink-0 transition-colors ${
+                isCollapsed ? "mx-auto" : ""
+              }`}
+            />
+            {!isCollapsed && (
+              <span className="text-sm font-medium whitespace-nowrap overflow-hidden">
+                {link.label}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      {!collapsed && storedUser?.user && (
-        <div className="mt-6 rounded-xl border border-white/10 bg-[#202020]/80 p-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-[#888]">Signed in as</p>
-          <p className="mt-1 line-clamp-1 text-sm font-semibold text-white">{storedUser.user.username}</p>
-        </div>
-      )}
+      {/* Footer Branding */}
+      <div className="mt-auto">
+        {!isCollapsed && (
+          <div className="px-4 py-4 text-[10px] text-muted-foreground/60 font-medium tracking-wider uppercase">
+            &copy; 2024 VDO Platform
+          </div>
+        )}
+      </div>
     </aside>
   );
-}
+};
 
 export default Sidebar;

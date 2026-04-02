@@ -74,18 +74,20 @@ function Sidevdoinvdo() {
       )}
 
       {!loading && error && (
-        <p className="rounded-xl border border-white/10 bg-[#181818] p-3 text-sm text-[#d8d8d8]">{error}</p>
+        <p className="rounded-xl border border-border bg-muted/30 p-4 text-xs font-bold text-muted-foreground animate-in fade-in">
+          {error}
+        </p>
       )}
 
       {!loading && recommended.length > 0 ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {recommended.map((video) => (
             <Card_for_vd0 key={video._id} video={video} compact />
           ))}
         </div>
       ) : (
         !loading && (
-          <p className="rounded-xl border border-dashed border-white/10 bg-[#181818] p-3 text-center text-sm text-[#b3b3b3]">
+          <p className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-xs font-bold text-muted-foreground/60">
             No videos available
           </p>
         )

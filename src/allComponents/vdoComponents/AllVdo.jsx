@@ -20,10 +20,9 @@ function AllVdo() {
     const fetchVideos = async () => {
       try {
         setLoading(true);
-
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (!storedUser?.accessToken) {
-          setError("Please log in to view videos");
+          setError("Please log in to view premium content");
           setLoading(false);
           return;
         }
@@ -36,7 +35,7 @@ function AllVdo() {
           api.get("/videos", authHeaders),
           api.get("/videos?sortBy=views&sortType=desc&limit=8", authHeaders),
           api.get("/videos?sortBy=createdAt&sortType=desc&limit=10", authHeaders),
-          api.get("/videos?sortBy=duration&sortType=desc&limit=8", authHeaders), // using duration or random logic
+          api.get("/videos?sortBy=duration&sortType=desc&limit=8", authHeaders),
         ]);
 
         setVideos(allRes.data?.data?.videos || []);
@@ -47,7 +46,7 @@ function AllVdo() {
         setError(null);
       } catch (err) {
         console.error(err);
-        setError("Could not fetch videos consistently");
+        setError("Network error: Try refreshing the page");
       } finally {
         setLoading(false);
       }
@@ -57,30 +56,74 @@ function AllVdo() {
   }, [setVideos]);
 
   return (
-    <section className="space-y-8 animate-fade-in-up">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#777]">Browse</p>
-        <h2 className="section-title mt-2">Discover</h2>
-      </div>
+    <section className="space-y-12 pb-20 bg-background text-foreground transition-colors duration-300">
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center shadow-sm transition-all hover:shadow-md">
+          <p className="text-sm font-bold text-red-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-3 text-xs font-black uppercase tracking-widest text-red-700 hover:text-red-900 underline underline-offset-4"
+          >
+            Retry Connection
+          </button>
+        </div>
+      )}
 
-      {error && <p className="rounded-xl border border-white/10 bg-[#181818] p-4 text-sm text-[#d8d8d8]">{error}</p>}
+      {/* Dynamic Sections */}
+      {trendingVideos.length > 0 && (
+        <div className="transition-all duration-500 ease-out opacity-100 translate-y-0">
+          <SectionRow title="Trending Now" videos={trendingVideos} loading={loading} />
+        </div>
+      )}
 
-      {trendingVideos.length > 0 && <SectionRow title="Trending" videos={trendingVideos} loading={loading} />}
-      {recommendedVideos.length > 0 && <SectionRow title="Recommended" videos={recommendedVideos} loading={loading} />}
-      {recentVideos.length > 0 && <SectionRow title="Recently Uploaded" videos={recentVideos} loading={loading} />}
+      {recommendedVideos.length > 0 && (
+        <div className="transition-all duration-500 ease-out delay-75 opacity-100 translate-y-0">
+          <SectionRow title="Recommended for You" videos={recommendedVideos} loading={loading} />
+        </div>
+      )}
 
+      {recentVideos.length > 0 && (
+        <div className="transition-all duration-500 ease-out delay-150 opacity-100 translate-y-0">
+          <SectionRow title="Fresh Content" videos={recentVideos} loading={loading} />
+        </div>
+      )}
+
+      {/* Main Grid */}
       {!loading && videos && videos.length > 0 && (
-        <section className="space-y-4">
-          <h3 className="text-xl font-bold tracking-tight text-white">All Videos</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 hover-cards">
+        <div className="space-y-8 px-4">
+          <div className="flex items-center gap-4">
+            <h3 className="text-2xl font-black tracking-tight text-foreground italic border-b-4 border-primary pb-2">
+              Explore Library
+            </h3>
+            <div className="h-[1px] flex-1 bg-border" />
+          </div>
+          
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {videos.map((video) => (
-              <Card_for_vd0 key={video._id} video={video} />
+              <div key={video._id} className="transition-transform duration-300 hover:scale-[1.02]">
+                <Card_for_vd0 video={video} />
+              </div>
             ))}
           </div>
-        </section>
+        </div>
+      )}
+
+      {loading && (
+        <div className="grid grid-cols-1 gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[1,2,3,4,5,6,7,8].map(i => (
+            <div key={i} className="space-y-4">
+              <div className="aspect-video w-full animate-pulse rounded-2xl bg-muted" />
+              <div className="space-y-2">
+                <div className="h-4 w-3/4 animate-pulse rounded-lg bg-muted" />
+                <div className="h-3 w-1/2 animate-pulse rounded-lg bg-muted/60" />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </section>
   );
 }
 
 export default AllVdo;
+

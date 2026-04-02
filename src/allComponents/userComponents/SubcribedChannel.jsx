@@ -1,6 +1,9 @@
+
+
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
+import AppShell from "../layout/AppShell";
 
 function SubscribedChannel() {
 
@@ -44,43 +47,57 @@ function SubscribedChannel() {
   }, [userId]);
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Subscribed Channels</h2>
+    <AppShell>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-black text-foreground">Subscribed Channels</h1>
 
-      {loading && <p className="text-sm text-gray-600 mb-3">Loading channels...</p>}
-      {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
+        {loading && (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-20 rounded-2xl shimmer" />
+            ))}
+          </div>
+        )}
 
-      {subscribedChannel.length === 0 ? (
-        <p>You are not subscribed to any channels.</p>
-      ) : (
-        <ul className="space-y-4">
-          {subscribedChannel.map((channel) => {
-            const info = channel.channelInfo;
+        {error && <p className="text-sm font-bold text-red-500 bg-red-500/10 p-4 rounded-xl">{error}</p>}
 
-            return (
-              <li key={channel._id} className="flex items-center gap-4 p-4 border rounded-lg">
-                <img
-                  src={info?.avatar}
-                  alt={info?.username}
-                  className="w-12 h-12 rounded-full"
-                />
+        {!loading && subscribedChannel.length === 0 ? (
+          <div className="surface-card p-20 text-center">
+            <p className="text-lg font-bold text-foreground">No subscriptions yet</p>
+            <p className="text-sm text-muted-foreground mt-1">Channels you subscribe to will appear here.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {subscribedChannel.map((channel) => {
+              const info = channel.channelInfo;
 
-                <div>
-                  <h3 className="text-xl font-semibold">
-                    {info?.name || info?.username}
-                  </h3>
+              return (
+                <div key={channel._id} className="surface-card flex items-center gap-4 p-5 hover:bg-muted/30 transition-all cursor-pointer group">
+                  <img
+                    src={info?.avatar}
+                    alt={info?.username}
+                    className="w-16 h-16 rounded-full border-2 border-border group-hover:border-[#E50914] transition-colors"
+                  />
 
-                  <p className="text-sm text-gray-500">
-                    @{info?.username}
-                  </p>
+                  <div className="flex-1 overflow-hidden">
+                    <h3 className="text-lg font-bold text-foreground truncate">
+                      {info?.name || info?.username}
+                    </h3>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      @{info?.username}
+                    </p>
+                  </div>
+                  
+                  <button className="rounded-full bg-muted px-4 py-2 text-xs font-bold text-foreground hover:bg-[#E50914] hover:text-white transition-all">
+                    Subscribed
+                  </button>
                 </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-    </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </AppShell>
   );
 }
 

@@ -46,7 +46,7 @@ export default function App() {
         <Route path="/Upload" element={<Uploadvdo />} />
         <Route path="/Dashboard" element={<UserDashboard />} />
         <Route path="/Playlist" element={<Playlist/>}/>
-        <Route path="/subscribedchannels" element={<SubscribedChannel/>}/>
+        <Route path="/subscriptions" element={<SubscribedChannel/>}/>
         <Route path="/channel/:id" element={<UserProfile />} />
         < Route path="/settings" element={<UsersSettings />} />
         < Route path="/settings/privacy" element={<PrivacyPolicy />} />
@@ -55,10 +55,10 @@ export default function App() {
         <Route path="/settings/accountcenter/updateprofile" element={<UpdateProfile/>}/>
         {/* wrap Showvdo in a wrapper with key so it remounts when id changes */}
         <Route
-          path="/videos/:id"
+          path="/video/:id"
           element={<VideoWrapper />}
         />
-        <Route path="/likedvideos" element={<LikedVdo/>}/>
+        <Route path="/liked-videos" element={<LikedVdo/>}/>
         <Route path="/history" element={<WatchHistory/>}/>
         <Route path="/subscribers" element={<Subscribers/>}/>
         <Route path="/deletevideo/:id" element={<DeleteVdo/>}/>

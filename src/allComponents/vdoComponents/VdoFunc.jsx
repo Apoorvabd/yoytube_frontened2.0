@@ -61,38 +61,45 @@ function Vdofunc() {
         onClick={() => setVdofunc(false)}
       />
 
-      <div className="fixed top-24 left-[50%] -translate-x-1/2 z-[70] w-full max-w-sm rounded-2xl overflow-hidden bg-white shadow-2xl animate-in fade-in zoom-in duration-200">
-        <div className="flex items-center justify-between border-b border-slate-100 bg-white px-5 py-4">
-          <h3 className="text-lg font-bold text-slate-800">
+      <div className="fixed top-24 left-[50%] -translate-x-1/2 z-[70] w-full max-w-sm rounded-[2rem] overflow-hidden bg-card border border-border shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="flex items-center justify-between border-b border-border bg-card px-6 py-5">
+          <h3 className="text-xl font-black text-foreground">
             {showPlaylists ? "Save to..." : "More Actions"}
           </h3>
           <button
             onClick={() => setVdofunc(false)}
-            className="rounded-full p-1.5 transition hover:bg-slate-100"
+            className="rounded-full p-2 transition hover:bg-muted"
           >
-            <IoCloseSharp className="text-xl text-slate-500" />
+            <IoCloseSharp className="text-2xl text-muted-foreground" />
           </button>
         </div>
 
-        <div className="max-h-[70vh] overflow-y-auto p-4 space-y-2">
+        <div className="max-h-[70vh] overflow-y-auto p-5 space-y-3">
           {!showPlaylists ? (
             <>
               <button 
                 onClick={fetchPlaylists}
-                className="w-full group flex items-center gap-3 rounded-xl border border-transparent bg-slate-50 px-4 py-3.5 text-left font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100"
+                className="w-full group flex items-center gap-4 rounded-2xl border border-transparent bg-muted/30 px-5 py-4 text-left font-bold text-foreground transition hover:bg-primary/10 hover:text-primary hover:border-primary/20"
               >
-                <span className="text-xl group-hover:scale-110 transition-transform">📋</span>
-                Add to Playlist
+                <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <span className="text-xl">📋</span>
+                </div>
+                <span>Add to Playlist</span>
               </button>
-              <button className="w-full group flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3.5 text-left font-semibold text-slate-700 transition hover:bg-slate-100" onClick={()=>{
-                shareVideo()
-              }}>
-                <span className="text-xl">🔗</span>
-                Share Video
+              <button 
+                onClick={shareVideo}
+                className="w-full group flex items-center gap-4 rounded-2xl bg-muted/30 px-5 py-4 text-left font-bold text-foreground transition hover:bg-muted/50"
+              >
+                <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground">
+                  <span className="text-xl">🔗</span>
+                </div>
+                <span>Share Video</span>
               </button>
-              <button className="w-full group flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3.5 text-left font-semibold text-slate-700 transition hover:bg-red-50 hover:text-red-500">
-                <span className="text-xl">📝</span>
-                Report Video
+              <button className="w-full group flex items-center gap-4 rounded-2xl bg-muted/30 px-5 py-4 text-left font-bold text-foreground transition hover:bg-destructive/10 hover:text-destructive">
+                <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center text-destructive">
+                  <span className="text-xl">📝</span>
+                </div>
+                <span>Report Video</span>
               </button>
             </>
           ) : (
@@ -105,24 +112,25 @@ function Vdofunc() {
               </button>
               
               {loading ? (
-                <div className="py-8 text-center text-slate-400 text-sm">Loading playlists...</div>
+                <div className="py-8 text-center text-muted-foreground text-xs font-bold animate-pulse">Loading playlists...</div>
               ) : playlists.length > 0 ? (
                 playlists.map((pl) => (
                   <button
                     key={pl._id}
                     onClick={() => addVideo(pl._id)}
-                    className="w-full flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 text-left font-medium text-slate-800 transition hover:bg-blue-50 hover:border-blue-200"
+                    className="w-full flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/20 px-5 py-4 text-left font-bold text-foreground transition hover:bg-muted"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-blue-500">📁</span>
+                      <span className="text-xl">📁</span>
                       <span>{pl.name}</span>
                     </div>
-                    <span className="text-xs text-slate-400">{pl.videos?.length || 0} videos</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{pl.videos?.length || 0} videos</span>
                   </button>
                 ))
               ) : (
-                <div className="py-8 text-center text-slate-500 bg-slate-50 rounded-xl">
-                   No playlists found. Create one first!
+                <div className="py-12 text-center text-muted-foreground bg-muted/20 rounded-3xl border border-dashed border-border px-6">
+                   <p className="text-sm font-bold">No playlists found</p>
+                   <p className="text-[10px] mt-1 opacity-60">Create a playlist to save videos</p>
                 </div>
               )}
             </div>

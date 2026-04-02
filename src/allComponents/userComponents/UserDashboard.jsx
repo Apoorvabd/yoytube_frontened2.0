@@ -100,13 +100,13 @@ export default function UserDashboard() {
                         className="absolute inset-0 bg-cover bg-center opacity-35"
                         style={{ backgroundImage: `url(${storedUser?.user?.avatar || "/hero.jfif"})` }}
                     />
-                    <div className="relative flex h-full items-end justify-between bg-gradient-to-t from-black/75 to-transparent p-6">
+                    <div className="relative flex h-full items-end justify-between bg-gradient-to-t from-background/90 via-background/40 to-transparent p-6">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.24em] text-[#b3b3b3]">Creator Space</p>
-                            <h1 className="mt-2 text-3xl font-black text-white">Welcome back, {storedUser?.user?.username || "Creator"}</h1>
+                            <p className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">Creator Space</p>
+                            <h1 className="mt-2 text-3xl font-black text-foreground">Welcome back, {storedUser?.user?.username || "Creator"}</h1>
                         </div>
                         <button
-                            className="rounded-full border border-white/15 bg-white/10 p-2.5 text-white transition hover:bg-white/20"
+                            className="rounded-full border border-border bg-muted/20 p-2.5 text-foreground transition hover:bg-muted"
                             onClick={() => setMore(true)}
                         >
                             <CgDetailsMore className="text-2xl" />
@@ -116,26 +116,26 @@ export default function UserDashboard() {
 
                 <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <div className="surface-card p-4 text-center">
-                        <p className="text-3xl font-bold text-white">{videos.length}</p>
-                        <p className="mt-1 text-sm text-[#b3b3b3]">Videos</p>
+                        <p className="text-3xl font-bold text-foreground">{videos.length}</p>
+                        <p className="mt-1 text-sm font-semibold text-muted-foreground">Videos</p>
                     </div>
-                    <button className="surface-card p-4 text-center" onClick={() => navigate("/subscribers")}>
-                        <p className="text-3xl font-bold text-white">{stats.totalSubscribers || 0}</p>
-                        <p className="mt-1 text-sm text-[#b3b3b3]">Subscribers</p>
+                    <button className="surface-card p-4 text-center hover:bg-muted/30 transition-colors" onClick={() => navigate("/subscribers")}>
+                        <p className="text-3xl font-bold text-foreground">{stats.totalSubscribers || 0}</p>
+                        <p className="mt-1 text-sm font-semibold text-muted-foreground">Subscribers</p>
                     </button>
                     <div className="surface-card p-4 text-center">
-                        <p className="text-3xl font-bold text-white">{stats.totalViews || 0}</p>
-                        <p className="mt-1 text-sm text-[#b3b3b3]">Views</p>
+                        <p className="text-3xl font-bold text-foreground">{stats.totalViews || 0}</p>
+                        <p className="mt-1 text-sm font-semibold text-muted-foreground">Views</p>
                     </div>
                     <div className="surface-card p-4 text-center">
-                        <p className="text-3xl font-bold text-white">{stats.totalLikes || 0}</p>
-                        <p className="mt-1 text-sm text-[#b3b3b3]">Likes</p>
+                        <p className="text-3xl font-bold text-foreground">{stats.totalLikes || 0}</p>
+                        <p className="mt-1 text-sm font-semibold text-muted-foreground">Likes</p>
                     </div>
                 </section>
 
                 <section className="surface-card p-5 md:p-6">
                     <div className="mb-4 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">Your Videos ({videos.length})</h2>
+                        <h2 className="text-xl font-bold text-foreground">Your Videos ({videos.length})</h2>
                         <button onClick={() => navigate("/Upload")} className="accent-btn text-sm">Upload New</button>
                     </div>
 

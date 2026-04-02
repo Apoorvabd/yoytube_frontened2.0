@@ -1,50 +1,38 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Card_for_vd0 from "../vdoComponents/Card_for_vd0";
 import api, { getAuthHeaders, getStoredUser } from "@/lib/api";
+import AppShell from "../layout/AppShell";
+import { User, Users, Play, Share2, ShieldCheck, Mail } from "lucide-react";
 
 function UserProfile() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [channel, setChannel] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(false);
 
-  // localStorage shape: { user: { _id, fullName, ... }, accessToken, refreshToken }
   const storedUser = getStoredUser();
   const accessToken = storedUser?.accessToken;
 
-  // ── Fetch channel details ────────────────────────────────────────────────
   const fetchChannelDetails = async () => {
     try {
       setLoading(true);
-      const res = await api.get(
-        `/users/channel/${id}`,
-        accessToken
-          ? { headers: getAuthHeaders() }
-          : {}
-      );
+      const res = await api.get(`/users/channel/${id}`, accessToken ? { headers: getAuthHeaders() } : {});
       setChannel(res.data.data);
     } catch (err) {
-      console.error("Error fetching channel:", err);
       toast.error("Failed to load channel");
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Fetch channel's videos ───────────────────────────────────────────────
   const fetchChannelVideos = async () => {
     try {
-      const res = await api.get(
-        `/videos?userId=${id}`,
-        accessToken
-          ? { headers: getAuthHeaders() }
-          : {}
-      );
-      // Backend returns: { data: { videos: [...], page, totalVideos, ... } }
+      const res = await api.get(`/videos?userId=${id}`, accessToken ? { headers: getAuthHeaders() } : {});
       const data = res.data?.data;
       const vids = data?.videos ?? data?.docs ?? (Array.isArray(data) ? data : []);
       setVideos(vids);
@@ -60,19 +48,14 @@ function UserProfile() {
     }
   }, [id]);
 
-  // ── Subscribe / Unsubscribe ──────────────────────────────────────────────
   const handleSubscribe = async () => {
     if (!accessToken) {
-      toast.error("Please log in to subscribe");
+      toast.error("Please log in to follow");
       return;
     }
     try {
       setSubscribing(true);
-      await api.post(
-        `/subscriptions/c/${id}`,
-        {},
-        { headers: getAuthHeaders() }
-      );
+      await api.post(`/subscriptions/c/${id}`, {}, { headers: getAuthHeaders() });
       setChannel((prev) => ({
         ...prev,
         isSubscribed: !prev.isSubscribed,
@@ -80,166 +63,151 @@ function UserProfile() {
           ? prev.subscribersCount - 1
           : prev.subscribersCount + 1,
       }));
-      toast.success(channel?.isSubscribed ? "Unsubscribed" : "Subscribed! 🎉");
+      toast.success(channel?.isSubscribed ? "Unfollowed" : "Following! 🎉");
     } catch (err) {
-      console.error(err);
-      toast.error("Subscription failed");
+      toast.error("Action failed");
     } finally {
       setSubscribing(false);
     }
   };
 
-  // ── Format helpers ───────────────────────────────────────────────────────
-  const formatViews = (v) => {
-    if (!v) return "0";
-    if (v >= 1_000_000) return (v / 1_000_000).toFixed(1) + "M";
-    if (v >= 1_000) return (v / 1_000).toFixed(1) + "K";
-    return String(v);
-  };
-
-  const timeAgo = (date) => {
-    const diff = Date.now() - new Date(date).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    if (days < 30) return `${days}d ago`;
-    const months = Math.floor(days / 30);
-    return `${months}mo ago`;
-  };
-
-  const shareProfile =()=>{
-    const profileUrl = `${window.location.origin}/channel/${id}`;
+  const shareProfile = () => {
+    const profileUrl = window.location.href;
     navigator.clipboard.writeText(profileUrl)
-      .then(() => toast.success("Profile URL copied to clipboard!"))
-      .catch(() => toast.error("Failed to copy URL"));
+      .then(() => toast.success("Share link copied!"))
+      .catch(() => toast.error("Copy failed"));
   }
 
-  // ── Loading state ────────────────────────────────────────────────────────
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0f0f0f] flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-zinc-700 border-t-red-500 rounded-full animate-spin" />
-        <p className="text-zinc-400 text-sm">Loading channel…</p>
+  if (loading) return (
+    <AppShell>
+      <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
+        <div className="h-12 w-12 rounded-full border-4 border-muted border-t-primary animate-spin" />
+        <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Sourcing Profile</p>
       </div>
-    );
-  }
+    </AppShell>
+  );
 
-  if (!channel) {
-    return (
-      <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
-        <p className="text-red-400 text-lg font-semibold">Channel not found.</p>
+  if (!channel) return (
+    <AppShell>
+      <div className="flex h-[40vh] items-center justify-center">
+        <p className="text-lg font-bold text-destructive uppercase tracking-widest">Creator space not found</p>
       </div>
-    );
-  }
+    </AppShell>
+  );
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white font-sans pb-20">
-
-      {/* ── Cover Banner ── */}
-      <div className="w-full h-48 md:h-60 overflow-hidden bg-zinc-800">
-        {channel.coverImage ? (
-          <img
-            src={channel.coverImage}
-            alt="Channel Cover"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-red-900 via-zinc-900 to-zinc-800" />
-        )}
-      </div>
-
-      {/* ── Channel Header ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 -mt-12 sm:-mt-14">
-
-          {/* Avatar */}
-          <img
-            src={
-              channel.avatar ||
-              `https://ui-avatars.com/api/?name=${channel.username}&background=e53935&color=fff&size=128`
-            }
-            alt={channel.username}
-            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-[#0f0f0f] object-cover shrink-0 shadow-xl"
-          />
-
-          {/* Info + Subscribe */}
-          <div className="flex flex-1 flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pb-1 w-full">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                {channel.fullName}
-              </h1>
-              <p className="text-zinc-400 text-sm mt-0.5">@{channel.username}</p>
-              <p className="text-zinc-500 text-xs mt-1">
-                <span className="text-zinc-300 font-medium">
-                  {formatViews(channel.subscribersCount)}
-                </span>{" "}
-                subscribers ·{" "}
-                
-                <span className="text-zinc-300 font-medium">
-                  {formatViews(channel.channelsSubscribedToCount)}
-                </span>{" "}
-                subscribed
-              </p>
-              
+    <AppShell>
+      <div className="space-y-8 pb-12 animate-in fade-in duration-700">
+        {/* Cover & Hero Section */}
+        <section className="relative h-64 md:h-80 overflow-hidden rounded-[3rem] border border-border shadow-soft group">
+          <div className="absolute inset-0 bg-slate-100">
+            {channel.coverImage ? (
+              <img src={channel.coverImage} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Cover" />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-indigo-50 via-white to-indigo-100" />
+            )}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+          
+          <div className="absolute bottom-10 left-10 right-10 flex flex-col md:flex-row items-end justify-between gap-6">
+            <div className="flex items-center gap-6">
+              <div className="relative group">
+                <img
+                  src={channel.avatar || `https://ui-avatars.com/api/?name=${channel.username}&background=6366f1&color=fff&size=128`}
+                  className="h-28 w-28 md:h-36 md:w-36 rounded-[2.5rem] border-8 border-background object-cover shadow-2xl transition-transform group-hover:rotate-6"
+                  alt={channel.username}
+                />
+                <div className="absolute -bottom-2 -right-2 bg-primary p-2.5 rounded-2xl text-white shadow-lg shadow-primary/30">
+                  <ShieldCheck size={20} />
+                </div>
+              </div>
+              <div className="pb-2">
+                <h1 className="text-4xl md:text-5xl font-[1000] tracking-tighter text-foreground leading-none">
+                  {channel.fullName}<span className="text-primary">.</span>
+                </h1>
+                <div className="flex items-center gap-4 mt-3 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                  <span className="flex items-center gap-1.5"><Users size={14} className="text-primary" /> {channel.subscribersCount?.toLocaleString() || 0} Followers</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-border" />
+                  <span>@{channel.username}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Subscribe Button */}
-            <button
-              onClick={handleSubscribe}
-              disabled={subscribing}
-              className={`shrink-0 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 
-                ${
-                  channel.isSubscribed
-                    ? "bg-zinc-700 hover:bg-zinc-600 text-white"
-                    : "bg-red-600 hover:bg-red-500 text-white"
-                } 
-                disabled:opacity-60 disabled:cursor-not-allowed`}
-            >
-              {subscribing
-                ? "..."
-                : channel.isSubscribed
-                ? "✓ Subscribed"
-                : "Subscribe"}
-            </button>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleSubscribe} 
+                disabled={subscribing}
+                className={`flex h-14 items-center gap-3 rounded-full px-8 text-sm font-black uppercase tracking-widest transition-all active:scale-95 ${
+                  channel.isSubscribed 
+                  ? "bg-muted text-foreground hover:bg-muted/80" 
+                  : "bg-primary text-white shadow-xl shadow-primary/20 hover:bg-primary/90"
+                }`}
+              >
+                {channel.isSubscribed ? "Following" : "Follow Creator"}
+              </button>
+              <button 
+                onClick={shareProfile}
+                className="flex h-14 w-14 items-center justify-center rounded-full bg-white border border-border text-foreground transition-all hover:bg-muted active:scale-95"
+              >
+                <Share2 size={20} />
+              </button>
+            </div>
           </div>
-          <button className={`shrink-0 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white`} onClick={()=>shareProfile()}>share profile</button>
-        </div>
+        </section>
 
-        {/* Divider */}
-        <div className="mt-6 border-b border-zinc-800" />
+        {/* Stats Grid */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="Total Videos" value={videos.length} icon={<Play size={18} />} />
+          <StatCard label="Followers" value={channel.subscribersCount} icon={<Users size={18} />} />
+          <StatCard label="Member Since" value={new Date(channel.createdAt || Date.now()).getFullYear()} icon={<ShieldCheck size={18} />} />
+          <StatCard label="Status" value="Verified" icon={<ShieldCheck size={18} />} color="text-emerald-500" />
+        </section>
 
-        {/* ── Videos Section ── */}
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold text-white mb-5">Videos</h2>
+        {/* Videos Section */}
+        <section className="surface-card bg-white p-8 md:p-12 border border-slate-100">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="text-3xl font-black tracking-tight text-foreground">Productions<span className="text-primary">.</span></h2>
+              <p className="text-sm font-bold text-muted-foreground mt-1 lowercase tracking-wide">Published works from this studio</p>
+            </div>
+          </div>
 
           {videos.length === 0 ? (
-            <div className="text-center py-20 text-zinc-500">
-              <p className="text-4xl mb-3">🎬</p>
-              <p className="text-base font-medium">No videos uploaded yet.</p>
+            <div className="py-24 text-center">
+              <div className="h-20 w-20 rounded-full bg-muted/30 flex items-center justify-center text-muted-foreground mx-auto mb-6">
+                <Play size={32} />
+              </div>
+              <p className="text-lg font-bold text-foreground">Studio is quiet...</p>
+              <p className="text-sm text-muted-foreground">No videos have been published yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {videos.map((v) => (
-                <Card_for_vd0
-                  key={v._id}
-                  video={{
-                    ...v,
-                    // agar owner already populated hai (getAllVideos me .populate hai)
-                    // toh directly pass karo, warna channel se inject karo
-                    owner: v.owner ?? {
-                      _id: id,
-                      username: channel.username,
-                      avatar: channel.avatar,
-                    },
-                  }}
-                />
+                <div key={v._id} className="transition-transform duration-300 hover:scale-[1.03]">
+                  <Card_for_vd0 
+                    video={{
+                      ...v,
+                      owner: v.owner ?? { _id: id, username: channel.username, avatar: channel.avatar }
+                    }} 
+                  />
+                </div>
               ))}
             </div>
           )}
-        </div>
+        </section>
       </div>
+    </AppShell>
+  );
+}
+
+function StatCard({ label, value, icon, color = "text-primary" }) {
+  return (
+    <div className="surface-card p-6 border-slate-100/60 bg-white/50 hover:bg-white transition-colors group">
+      <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-muted/40 transition-transform group-hover:scale-110 ${color}`}>
+        {icon}
+      </div>
+      <p className="text-3xl font-[1000] text-foreground tracking-tighter">{value?.toLocaleString() || value}</p>
+      <p className="mt-1 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
     </div>
   );
 }

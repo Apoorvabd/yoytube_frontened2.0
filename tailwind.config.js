@@ -12,20 +12,20 @@ export default {
 		},
 		colors: {
 			netflix: {
-				bg: '#0f0f0f',
-				surface: '#181818',
-				surfaceSoft: '#202020',
+				bg: '#f8fafc',
+				surface: '#ffffff',
+				surfaceSoft: '#f1f5f9',
 				accent: '#E50914',
-				text: '#ffffff',
-				muted: '#b3b3b3'
+				text: '#0f172a',
+				muted: '#64748b'
 			}
 		},
 		boxShadow: {
-			glow: '0 0 28px rgba(229, 9, 20, 0.35)',
-			surface: '0 20px 45px -25px rgba(0,0,0,0.9)'
+			glow: '0 0 28px rgba(229, 9, 20, 0.15)',
+			surface: '0 20px 45px -25px rgba(0,0,0,0.1)'
 		},
 		backgroundImage: {
-			hero: 'linear-gradient(120deg, rgba(15,15,15,0.95) 30%, rgba(15,15,15,0.45) 60%, rgba(229,9,20,0.35) 100%)'
+			hero: 'linear-gradient(120deg, rgba(255,255,255,0.95) 30%, rgba(255,255,255,0.75) 60%, rgba(229,9,20,0.05) 100%)'
 		},
   		borderRadius: {
   			lg: 'var(--radius)',
