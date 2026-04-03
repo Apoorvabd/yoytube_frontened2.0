@@ -77,10 +77,10 @@ function Signup() {
               {/* Profile Details */}
               <div className="space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Username</Label>
+                  <Label className="text-[10px] text-black uppercase tracking-[0.2em] text-primary ml-1">Username</Label>
                   <Input
                     {...register("username", { required: "Username is required" })}
-                    className="h-14 bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
+                    className="h-14 bg-muted border-border text-black focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
                     placeholder="skywalker_01"
                   />
                 </div>
@@ -89,7 +89,7 @@ function Signup() {
                   <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Full Name</Label>
                   <Input
                     {...register("fullName", { required: "Full name is required" })}
-                    className="h-14 bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
+                    className="h-14 bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all text-black"
                     placeholder="Anakin Skywalker"
                   />
                 </div>
@@ -99,7 +99,7 @@ function Signup() {
                   <Input
                     {...register("email", { required: "Email is required" })}
                     type="email"
-                    className="h-14 bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
+                    className="h-14 bg-muted border-border text-black focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
                     placeholder="anakin@jedi.com"
                   />
                 </div>
@@ -109,7 +109,7 @@ function Signup() {
                   <Input
                     {...register("password", { required: "Password is required" })}
                     type="password"
-                    className="h-14 bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
+                    className="h-14 bg-muted border-border text-black  focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
                     placeholder="••••••••"
                   />
                 </div>

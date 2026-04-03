@@ -15,7 +15,7 @@ import {
 // Navigation links config
 const links = [
   { label: "Home", to: "/", icon: Home },
-  { label: "Explore", to: "/explore", icon: Compass },
+  { label: "Plalist", to: "/Playlist", icon: Compass },
   { label: "Subscriptions", to: "/subscriptions", icon: Play },
   { label: "Upload", to: "/upload", icon: PlusCircle },
   { label: "Liked", to: "/liked-videos", icon: Heart },

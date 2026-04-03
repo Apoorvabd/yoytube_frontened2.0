@@ -43,10 +43,10 @@ function Login() {
             <div className="h-16 w-16 rounded-[2rem] bg-primary flex items-center justify-center text-white shadow-2xl shadow-primary/40 mb-2">
               <span className="text-3xl font-black">N</span>
             </div>
-            <span className="text-4xl font-[1000] tracking-tighter text-foreground">
+            <span className="text-4xl font-[1000] tracking-tighter text-black">
               NAVYA<span className="text-primary">.</span>
             </span>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">Creative Studio</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black">Creative Studio</p>
           </div>
         </div>
 
@@ -54,8 +54,8 @@ function Login() {
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary/10" />
 
           <div className="mb-10">
-            <h2 className="text-3xl font-black text-foreground tracking-tighter">Welcome back</h2>
-            <p className="text-sm font-bold text-muted-foreground mt-2">Enter your credentials to continue</p>
+            <h2 className="text-3xl font-black text-black tracking-tighter">Welcome back</h2>
+            <p className="text-sm font-bold text-black mt-2">Enter your credentials to continue</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -75,10 +75,10 @@ function Login() {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
-                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Password</Label>
+                <Label className="text-[10px] text-black uppercase tracking-[0.2em] text-primary">Password</Label>
                 <button 
                   type="button" 
-                  className="text-[10px] font-black uppercase tracking-[0.1em] text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                  className="text-[10px] font-black uppercase tracking-[0.1em] text-black hover:text-primary transition-colors focus:outline-none"
                 >
                   Forgot Key?
                 </button>
@@ -86,7 +86,7 @@ function Login() {
               <Input
                 type="password"
                 {...register("password", { required: "Password is required" })}
-                className="bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary h-14 px-6 text-base rounded-2xl transition-all"
+                className="bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary h-14 px-6 text-black rounded-2xl transition-all"
                 placeholder="••••••••"
               />
               {errors.password && (
