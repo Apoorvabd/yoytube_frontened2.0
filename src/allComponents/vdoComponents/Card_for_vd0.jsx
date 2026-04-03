@@ -31,21 +31,32 @@ const Card_for_vd0 = ({ video, compact = false }) => {
   
   // Safely get user from localStorage
   const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+  console.log("Card_for_vd0 - video prop:", video);
 
   if (!video) return null;
 
   const isOwner =
-    Boolean(storedUser?.user?._id && video?.owner?._id) &&
-    storedUser.user._id === video.owner?._id;
+    Boolean(storedUser?.user?._id && (video?.owner?._id || video?.owner)) &&
+    storedUser.user._id === (video.owner?._id || (typeof video.owner === 'string' ? video.owner : null));
 
   const handleCardClick = () => {
-    navigate(`/video/${video._id}`);
+    const videoId = video._id || video.videoId;
+    if (videoId) {
+      navigate(`/video/${videoId}`);
+    } else {
+      console.error("Video ID is missing for card:", video);
+    }
   };
 
   const handleProfileClick = (e) => {
     e.stopPropagation();
-    if (video.owner?._id) {
-      navigate(`/channel/${video.owner._id}`);
+    const ownerId = video.owner?._id || video.owner;
+    if (ownerId && typeof ownerId === 'string') {
+      navigate(`/channel/${ownerId}`);
+    } else if (ownerId?._id) {
+      navigate(`/channel/${ownerId._id}`);
+    } else {
+      console.error("Owner ID is missing for video:", video);
     }
   };
 

@@ -40,6 +40,7 @@ function Sidevdoinvdo() {
             Authorization: `Bearer ${storedUser.accessToken}`,
           },
         });
+        console.log("Fetched videos:", data);
 
         const videosData = data?.data?.videos || [];
 
