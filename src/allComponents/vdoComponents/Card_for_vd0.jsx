@@ -85,13 +85,13 @@ const Card_for_vd0 = ({ video, compact = false }) => {
   return (
     <article
       onClick={handleCardClick}
-      className={`group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 dark:border-slate-800 dark:bg-slate-900 ${
+      className={`group relative flex flex-col overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 dark:border-slate-800 dark:bg-slate-900 ${
         compact ? "max-w-md" : "w-full"
       } cursor-pointer surface-card`}
     >
       {/* Thumbnail Container */}
-      <div className="relative aspect-video w-full overflow-hidden p-3">
-        <div className="relative h-full w-full overflow-hidden rounded-[1.5rem] bg-slate-100 dark:bg-slate-800">
+      <div className="relative aspect-video w-full overflow-hidden p-2 md:p-3">
+        <div className="relative h-full w-full overflow-hidden rounded-[1rem] md:rounded-[1.5rem] bg-slate-100 dark:bg-slate-800">
           <img
             src={video.thumbnail}
             alt={video.title}
@@ -100,30 +100,30 @@ const Card_for_vd0 = ({ video, compact = false }) => {
           
           {/* Play Overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/90 text-primary shadow-xl transition-transform duration-300 group-hover:scale-110 active:scale-95">
-              <Play size={24} fill="currentColor" className="ml-1" />
+            <div className="flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-xl md:rounded-2xl bg-white/90 text-primary shadow-xl transition-transform duration-300 group-hover:scale-110 active:scale-95">
+              <Play size={20} fill="currentColor" className="ml-0.5 md:ml-1" />
             </div>
           </div>
 
           {/* Duration Badge */}
-          <div className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/60 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur-md">
-            <Clock size={12} />
+          <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center gap-1.5 rounded-lg md:rounded-xl border border-white/20 bg-black/60 px-2 md:px-3 py-1 md:py-1.5 text-[9px] md:text-[11px] font-bold text-white backdrop-blur-md">
+            <Clock size={10} className="md:w-3 md:h-3" />
             <span>{video.duration || "00:00"}</span>
           </div>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 space-y-3">
-            <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-slate-800 transition-colors hover:text-primary dark:text-slate-100">
+      <div className="flex flex-1 flex-col px-4 pb-4 md:px-6 md:pb-6 pt-1 md:pt-2">
+        <div className="flex items-start justify-between gap-3 md:gap-4">
+          <div className="flex-1 space-y-2 md:space-y-3">
+            <h3 className="line-clamp-2 text-sm md:text-lg font-bold leading-tight md:leading-snug tracking-tight text-slate-800 transition-colors hover:text-primary dark:text-slate-100">
               {video.title}
             </h3>
 
             {/* Owner Info */}
-            <div className="flex items-center gap-3 group/owner" onClick={handleProfileClick}>
-              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-slate-100 bg-slate-200 shadow-sm transition-transform group-hover/owner:scale-105 dark:border-slate-700 dark:bg-slate-800">
+            <div className="flex items-center gap-2 md:gap-3 group/owner" onClick={handleProfileClick}>
+              <div className="relative h-8 w-8 md:h-10 md:w-10 shrink-0 overflow-hidden rounded-lg md:rounded-2xl border-2 border-slate-100 bg-slate-200 shadow-sm transition-transform group-hover/owner:scale-105 dark:border-slate-700 dark:bg-slate-800">
                 {video.owner?.avatar ? (
                   <img
                     src={video.owner.avatar}
@@ -132,17 +132,17 @@ const Card_for_vd0 = ({ video, compact = false }) => {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-slate-400">
-                    <User size={20} />
+                    <User size={16} className="md:w-5 md:h-5" />
                   </div>
                 )}
               </div>
               <div className="flex flex-col overflow-hidden">
-                <span className="truncate text-sm font-semibold text-slate-700 hover:text-primary dark:text-slate-300">
+                <span className="truncate text-xs md:text-sm font-semibold text-slate-700 hover:text-primary dark:text-slate-300">
                   {video.owner?.fullName || "Anonymous Creator"}
                 </span>
-                <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                <div className="flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[11px] font-medium uppercase tracking-wider text-slate-500">
                   <span>{video.views?.toLocaleString() || 0} Views</span>
-                  <span className="h-1 w-1 rounded-full bg-slate-400"></span>
+                  <span className="h-0.5 w-0.5 md:h-1 md:w-1 rounded-full bg-slate-400"></span>
                   <span>{formattedDate}</span>
                 </div>
               </div>

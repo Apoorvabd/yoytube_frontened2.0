@@ -23,12 +23,35 @@ const links = [
   { label: "Settings", to: "/settings", icon: Settings },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isMobileNav = false }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  if (isMobileNav) {
+    return (
+      <nav className="flex w-full items-center justify-around gap-1">
+        {links.slice(0, 5).map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center gap-1 p-2 rounded-xl transition-all duration-200 ${
+                isActive ? "text-primary" : "text-muted-foreground"
+              }`
+            }
+          >
+            <link.icon size={20} className="shrink-0" />
+            <span className="text-[10px] font-bold uppercase tracking-tighter">
+              {link.label === "Subscriptions" ? "Subs" : link.label}
+            </span>
+          </NavLink>
+        ))}
+      </nav>
+    );
+  }
 
   return (
     <aside
-      className={`relative flex flex-col h-screen bg-card border-r border-border transition-all duration-300 ease-in-out px-4 py-6 rounded-r-[2rem] shadow-sm ${
+      className={`relative hidden lg:flex flex-col h-[calc(100vh-120px)] sticky top-24 bg-card border border-border transition-all duration-300 ease-in-out px-4 py-6 rounded-[2rem] shadow-sm ${
         isCollapsed ? "w-24" : "w-72"
       }`}
     >
@@ -42,7 +65,7 @@ const Sidebar = () => {
       </button>
 
       {/* Navigation List */}
-      <nav className="flex flex-col gap-2 mt-8">
+      <nav className="flex flex-col gap-2 mt-2">
         {links.map((link) => (
           <NavLink
             key={link.to}
@@ -62,7 +85,7 @@ const Sidebar = () => {
               }`}
             />
             {!isCollapsed && (
-              <span className="text-sm font-medium whitespace-nowrap overflow-hidden">
+              <span className="text-sm font-bold whitespace-nowrap overflow-hidden italic tracking-tight">
                 {link.label}
               </span>
             )}
@@ -71,13 +94,11 @@ const Sidebar = () => {
       </nav>
 
       {/* Footer Branding */}
-      <div className="mt-auto">
-        {!isCollapsed && (
-          <div className="px-4 py-4 text-[10px] text-muted-foreground/60 font-medium tracking-wider uppercase">
-            &copy; 2024 VDO Platform
-          </div>
-        )}
-      </div>
+      {!isCollapsed && (
+        <div className="mt-auto px-4 py-4 text-[10px] text-muted-foreground/60 font-black tracking-widest uppercase italic">
+          &copy; 2024 VDO Platform
+        </div>
+      )}
     </aside>
   );
 };

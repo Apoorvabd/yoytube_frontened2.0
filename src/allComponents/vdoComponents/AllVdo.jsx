@@ -92,17 +92,15 @@ function AllVdo() {
       {!loading && videos && videos.length > 0 && (
         <div className="space-y-8 px-4">
           <div className="flex items-center gap-4">
-            <h3 className="text-2xl font-black tracking-tight text-foreground italic border-b-4 border-primary pb-2">
+            <h3 className="text-xl md:text-2xl font-black tracking-tight text-foreground italic border-b-4 border-primary pb-2">
               Explore Library
             </h3>
             <div className="h-[1px] flex-1 bg-border" />
           </div>
-          
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
             {videos.map((video) => (
-              <div key={video._id} className="transition-transform duration-300 hover:scale-[1.02]">
-                <Card_for_vd0 video={video} />
-              </div>
+              <Card_for_vd0 key={video._id} video={video} />
             ))}
           </div>
         </div>

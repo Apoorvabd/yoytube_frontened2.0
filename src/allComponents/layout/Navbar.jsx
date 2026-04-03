@@ -54,22 +54,18 @@ function Navbar({ onSearch }) {
         
         {/* Logo Section */}
         <div className="flex items-center gap-4">
-          <button className="lg:hidden text-foreground/70 hover:text-foreground">
-            <Menu size={24} />
-          </button>
           <button
-            type="button"
             onClick={() => navigate("/")}
             className="group flex items-center gap-2 transition-transform active:scale-95"
           >
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:rotate-12 transition-transform">
-              <span className="text-xl font-black">N</span>
+            <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:rotate-12 transition-transform">
+              <span className="text-lg md:text-xl font-black">N</span>
             </div>
             <div className="flex flex-col items-start leading-none pt-0.5">
-              <span className="text-xl font-[1000] tracking-tighter text-foreground">
+              <span className="text-lg md:text-xl font-[1000] tracking-tighter text-foreground">
                 NAVYA<span className="text-primary">.</span>
               </span>
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+              <span className="text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-muted-foreground leading-none">
                 EAKSHAN
               </span>
             </div>
@@ -80,15 +76,15 @@ function Navbar({ onSearch }) {
         <form
           ref={searchRef}
           onSubmit={submitSearch}
-          className="relative flex-1 max-w-xl hidden md:block"
+          className="relative flex-1 max-w-xl"
         >
-          <div className="group relative flex w-full items-center gap-3 rounded-2xl border border-border bg-muted/30 px-5 py-3 transition-all duration-300 focus-within:bg-white focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5">
-            <Search className="h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+          <div className="group relative flex w-full items-center gap-2 md:gap-3 rounded-xl md:rounded-2xl border border-border bg-muted/30 px-3 md:px-5 py-2 md:py-3 transition-all duration-300 focus-within:bg-white focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5">
+            <Search className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search creators, videos, topics..."
-              className="w-full bg-transparent text-sm font-bold text-foreground outline-none placeholder:text-muted-foreground/50"
+              placeholder="Search..."
+              className="w-full bg-transparent text-xs md:text-sm font-bold text-foreground outline-none placeholder:text-muted-foreground/50"
             />
           </div>
 

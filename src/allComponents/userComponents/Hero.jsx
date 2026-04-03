@@ -38,25 +38,25 @@ function Hero() {
             <span>{featured?.subtitle || "NAVYA EAKSHAN"}</span>
           </div>
 
-          <h1 className="text-6xl font-black md:text-8xl tracking-tight text-slate-900 leading-[0.9]">
+          <h1 className="text-4xl font-black md:text-8xl tracking-tight text-slate-900 leading-[1.1] md:leading-[0.9]">
             {featured?.title || "Share your vision with the world."}
           </h1>
 
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-500 font-medium leading-relaxed">
+          <p className="max-w-2xl mx-auto text-sm md:text-xl text-slate-500 font-medium leading-relaxed">
             {featured?.description}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
             <button
               onClick={() => navigate("/login")}
-              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-full bg-slate-900 px-10 text-base font-bold text-white shadow-xl transition-all hover:bg-slate-800 active:scale-95"
+              className="group relative inline-flex h-12 md:h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-slate-900 px-8 md:px-10 text-sm md:text-base font-bold text-white shadow-xl transition-all hover:bg-slate-800 active:scale-95"
             >
               Get Started
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
             <button
               onClick={() => navigate("/Upload")}
-              className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-10 text-base font-bold text-slate-900 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
+              className="inline-flex h-12 md:h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-8 md:px-10 text-sm md:text-base font-bold text-slate-900 shadow-sm transition-all hover:bg-slate-50 active:scale-95"
             >
               <UploadCloud className="w-4 h-4" />
               Upload Now

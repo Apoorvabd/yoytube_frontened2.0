@@ -32,6 +32,22 @@ const user=JSON.parse(localStorage.getItem("user"));
 
     // ✅ FIX: user.user._id — localStorage shape: { user: {_id}, accessToken }
     }, [user?.user?._id]);
+  async function getPlaylist(id){
+    try{
+        const res=await api.get(`/playlist/${id}`, {
+            headers: {
+                Authorization: `Bearer ${user.accessToken}`
+            }
+        });
+        return res.data;
+    }
+    catch(err){
+        console.log(err);
+        toast.error("failed to fetch playlist");
+        return null;
+    }
+}
+
 
   return (
     <>
@@ -48,7 +64,8 @@ const user=JSON.parse(localStorage.getItem("user"));
                 className="group relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col h-[400px] border border-slate-800"
               >
                 {/* Playlist Thumbnail / Theme */}
-                <div className="relative h-60 w-full overflow-hidden">
+                <div className="relative h-60 w-full overflow-hidden"
+                onClick={()=>getPlaylist()}>
                   <img
                     src={firstVideoThumbnail}
                     alt={playlist.name}

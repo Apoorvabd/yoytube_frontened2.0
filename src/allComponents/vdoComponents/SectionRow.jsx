@@ -14,9 +14,9 @@ function SectionRow({ title, videos = [], loading = false }) {
       </div>
 
       {loading ? (
-        <div className="flex gap-6 overflow-hidden px-4">
+        <div className="flex gap-4 md:gap-6 overflow-hidden px-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="w-[300px] flex-none space-y-4">
+            <div key={index} className="w-[260px] md:w-[300px] flex-none space-y-4">
               <div className="aspect-video rounded-2xl bg-muted animate-pulse" />
               <div className="space-y-2">
                 <div className="h-4 w-3/4 rounded-full bg-muted animate-pulse" />
@@ -27,11 +27,11 @@ function SectionRow({ title, videos = [], loading = false }) {
         </div>
       ) : videos.length > 0 ? (
         <div className="relative group">
-          <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-8 px-4 no-scrollbar scroll-smooth transition-all">
+          <div className="flex snap-x snap-mandatory gap-4 md:gap-6 overflow-x-auto pb-8 px-4 no-scrollbar scroll-smooth transition-all">
             {videos.map((video) => (
               <div 
                 key={video._id} 
-                className="w-[300px] flex-none snap-start md:w-[340px] transition-transform duration-300 hover:scale-[1.02]"
+                className="w-[280px] flex-none snap-start md:w-[340px] transition-transform duration-300 hover:scale-[1.02]"
               >
                 <Card_for_vd0 video={video} compact />
               </div>
