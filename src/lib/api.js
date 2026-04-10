@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  // baseURL: "https://youtube-backend-vdcg.onrender.com/api/v1",
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: "https://youtube-backend-vdcg.onrender.com/api/v1",
+  // baseURL: "http://localhost:8000/api/v1",
   withCredentials: true,
 });
 
@@ -24,5 +24,14 @@ export const getAuthHeaders = () => {
       }
     : {};
 };
+
+// Automatically append authorization token to every request
+api.interceptors.request.use((config) => {
+  const token = getStoredUser()?.accessToken;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default api;
