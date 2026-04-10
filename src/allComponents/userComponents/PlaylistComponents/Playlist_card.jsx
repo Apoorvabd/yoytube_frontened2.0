@@ -1,71 +1,64 @@
 import api from "../../../lib/api";
-import { useEffect ,useState,useContext} from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { DataContext } from "@/Context/UserContext";
+import { useNavigate } from "react-router-dom";
 
-function Card(){
-    const [platlists,setPlalists]=useState([]);
-const user=JSON.parse(localStorage.getItem("user"));
-    useEffect(()=>{
-        const fetchPalylist= async ()=>{
-            // ensure we have a logged-in user
-           
+function Card() {
+  const [playlists, setPlaylists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
-            try{
-                const res=await api.get(`/playlist/user/${user.user._id}`, {
-                    headers: {
-                        Authorization: `Bearer ${user.accessToken}`
-                    }
-                });
-                // server responds with { status, data, message }
-                setPlalists(res.data.data || []);
-                console.log(res.data);
-                toast.success("playlists fetched successfully");
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      if (!user?.user?._id) {
+        setLoading(false);
+        return;
+      }
 
-            }
-            catch(err){
-                console.log(err);
-                toast.error("failed to fetch playlists");
-            }
-        }
-        fetchPalylist();
-
-    // ✅ FIX: user.user._id — localStorage shape: { user: {_id}, accessToken }
-    }, [user?.user?._id]);
-  async function getPlaylist(id){
-    try{
-        const res=await api.get(`/playlist/${id}`, {
-            headers: {
-                Authorization: `Bearer ${user.accessToken}`
-            }
+      try {
+        const res = await api.get(`/playlist/user/${user.user._id}`, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`
+          }
         });
-        return res.data;
-    }
-    catch(err){
-        console.log(err);
-        toast.error("failed to fetch playlist");
-        return null;
-    }
-}
+        setPlaylists(res.data.data || []);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch playlists");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPlaylists();
+  }, [user?.user?._id, user?.accessToken]);
 
+  const goToPlaylist = (id) => {
+    navigate(`/playlist/${id}`);
+  };
+
+  if (loading) {
+    return <div className="p-6 text-center text-slate-400">Loading playlists...</div>;
+  }
 
   return (
     <>
-      {platlists && platlists.length > 0 ? (
+      {playlists && playlists.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
-          {platlists.map((playlist) => {
-            const firstVideoThumbnail = playlist.videos && playlist.videos.length > 0 
-              ? playlist.videos[0].thumbnail 
-              : "https://via.placeholder.com/640x360?text=Empty+Playlist";
+          {playlists.map((playlist) => {
+            const firstVideoThumbnail =
+              playlist.videos && playlist.videos.length > 0 && playlist.videos[0].thumbnail
+                ? playlist.videos[0].thumbnail
+                : "https://via.placeholder.com/640x360?text=Empty+Playlist";
 
             return (
               <div
                 key={playlist._id}
-                className="group relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col h-[400px] border border-slate-800"
+                className="group relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col h-[400px] border border-slate-800 cursor-pointer"
+                onClick={() => goToPlaylist(playlist._id)}
               >
                 {/* Playlist Thumbnail / Theme */}
-                <div className="relative h-60 w-full overflow-hidden"
-                onClick={()=>getPlaylist()}>
+                <div className="relative h-60 w-full overflow-hidden">
                   <img
                     src={firstVideoThumbnail}
                     alt={playlist.name}

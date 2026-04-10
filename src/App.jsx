@@ -24,6 +24,8 @@ import LikedVdo from "./allComponents/userComponents/LikedVdo";
 import WatchHistory from "./allComponents/userComponents/Watchhistory";
 import Subscribers from "./allComponents/userComponents/Subscribers";
 import DeleteVdo from "./allComponents/vdoComponents/VdoFunctions/DeleteVdo";
+import UpdateVdo from "./allComponents/vdoComponents/VdoFunctions/UpdateVdo";
+import PlaylistDetail from "./allComponents/userComponents/PlaylistComponents/PlaylistDetail";
 
 // wrapper that keys Showvdo by id so it fully remounts when the parameter changes
 function VideoWrapper() {
@@ -62,6 +64,8 @@ export default function App() {
         <Route path="/history" element={<WatchHistory/>}/>
         <Route path="/subscribers" element={<Subscribers/>}/>
         <Route path="/deletevideo/:id" element={<DeleteVdo/>}/>
+        <Route path="/updatevideo/:id" element={<UpdateVdo/>}/>
+        <Route path="/playlist/:id" element={<PlaylistDetail/>}/>
         </Routes>
        <Toaster position="top-right" />
 
