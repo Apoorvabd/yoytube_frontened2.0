@@ -1,166 +1,153 @@
-# Video Sharing Platform (Frontend)
+# 🚀 Streamify - Modern Video Sharing Platform
 
-Welcome to the frontend application of the Video Sharing Platform (YouTube Clone). This project is built using React, Vite, and tailwind for a highly interactive and modern user experience.
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
 
-## 🚀 Tech Stack
+> A high-performance, responsive, and fully functional to deliver a seamless video consumption and sharing experience.
 
-- **Framework:** React 19 + Vite
+**[Live Demo](https://navyaekshan.netlify.app/) | [Backend Repository](https://github.com/Apoorvabd/youtube_backend)**
+
+---
+
+## 📌 Overview
+
+**Navya Ekshan** is a comprehensive full stack application for a video sharing platform. Built with modern React and Tailwind CSS, it offers a rich user interface where users can discover, upload, and interact with video content. This project was developed with robust state management, secure routing, and highly reusable UI components to emulate a production-grade application architecture.
+
+---
+
+## ✨ Features
+
+- **🔐 Secure Authentication:** Seamless user onboarding with JWT-based Login and Signup forms utilizing React Hook Form and Zod for strict validation.
+- **🎥 Video Discovery & Playback:** Explore personalized video feeds, view related recommendations, and experience seamless video playback.
+- **📥 Content Creation:** Dedicated upload dashboard allowing creators to publish videos with custom thumbnails, titles, and descriptions.
+- **💬 Community Interaction:** Full commenting system, nested replies, and like/dislike functionalities on both videos and comments.
+- **📚 Playlist Management:** Create, edit, and organize custom playlists. Save videos to watch history or "Liked Videos".
+- **🔔 Channel Subscriptions:** Subscribe to favorite creators, view subscriber counts, and filter feeds by subscribed channels.
+- **⚙️ User Dashboard:** Comprehensive user profile management, channel settings, and analytics for uploaded content.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Core:** React 19, Vite
 - **Routing:** React Router DOM
-- **Styling:** Tailwind CSS, tailwindcss-animate
-- **UI Components:** Radix UI primitives & Shadcn UI architecture (lucide-react, react-icons)
-- **Forms & Validation:** React Hook Form + Zod resolvers
-- **HTTP Client:** Axios
-- **State Management:** React Context API
-- **Notifications:** React Hot Toast
+- **Styling:** Tailwind CSS, `tailwindcss-animate`
+- **UI Components:** Radix UI primitives, Shadcn UI architecture, Lucide React, React Icons
+- **Forms & Validation:** React Hook Form, Zod
+- **Networking:** Axios (configured with interceptors for auth tokens)
+- **State Management:** React Context API (`UserContext`, `LocalContext`)
 
 ---
 
-## 🏗️ Architecture Diagram
-
-The application uses a standard React component hierarchy hooked into Context for global state, with a dedicated routing layer and service endpoints that abstract HTTP calls to the backend.
-
-```mermaid
-graph TD
-    A[App / Router] --> B[Global Context Provider]
-    B --> C[Layout / Navbar / Sidebar]
-    B --> D[Pages / Views]
-
-    D --> E[User Components]
-    D --> F[Video Components]
-    
-    E --> G[UserProfile, Dashboard, Auth]
-    F --> H[Video Player, Comments, Recommendations]
-    
-    G & H --> I[Axios HTTP Client]
-    I --> J[(Backend API Server)]
-```
-
----
-
-## 📁 Project Structure
+## 📂 Folder Structure
 
 ```text
 src/
-├── allComponents/         # Main application components
-│   ├── ui/                # Reusable base UI components (Shadcn UI structure)
-│   ├── userComponents/    # User-centric features
-│   │   ├── Login, Signup, Navbar, Hero
-│   │   ├── UserProfile, UserDashboard, UsersSettings
-│   │   ├── Uploadvdo, SubcribedChannel, PlaylistComponents
-│   └── vdoComponents/     # Video-centric features
-│       ├── AllVdo, Showvdo, Card_for_vd0, Sidevdoinvdo
-│       ├── VdoFunc (Like, Share, etc.)
-│       └── Vdocomments (Comment system)
-├── Context/               # React Context providers for global state
-├── lib/                   # Utility functions (e.g., tailwind-merge utilities)
-├── App.jsx                # Main application component & routes
-└── main.jsx               # Application entry point
+├── allComponents/         # Core application components
+│   ├── layout/            # AppShell, Navbar, Sidebar
+│   ├── ui/                # Reusable Shadcn UI primitives (buttons, inputs, cards)
+│   ├── userComponents/    # User-centric features (Auth, Dashboard, Profiles, Playlists)
+│   └── vdoComponents/     # Video-centric features (Player, Feed, Comments, Actions)
+├── Context/               # Global state providers
+├── lib/                   # Utility functions (API configs, className mergers)
+├── App.jsx                # Application routing configuration
+└── main.jsx               # React DOM entry point
 ```
 
 ---
 
-## ✨ Key Features
+## ⚙️ Installation & Setup Guide
 
-- **Authentication System:** Secure Login and Signup functionality.
-- **Video Discovery and Management:** 
-  - Upload videos directly from the dashboard.
-  - Browse available videos via feeds.
-  - Recommended and related side-videos (`Sidevdoinvdo`).
-- **User Engagement:** 
-  - Like, dislike, and share functionalities (`VdoFunc`).
-  - Read and post comments on videos (`Vdocomments`).
-- **User Dashboard & Profile:** 
-  - Manage uploaded videos, playlists, and channel settings.
-- **Subscriptions & Playlists:** Subscribe to channels and create categorized video playlists.
+Follow these steps to set up the project locally.
 
----
+**1. Clone the repository**
+```bash
+git clone https://github.com/yourusername/streamify-frontend.git
+cd streamify-frontend
+```
 
-## 🌍 Environment Setup
+**2. Install dependencies**
+```bash
+npm install
+# or
+yarn install
+```
 
-Create an `.env` (or `.env.local`) file in the root of your `frontend` directory. Add the required environment variables:
-
+**3. Configure Environment Variables**
+Create a `.env` file in the root directory and add your backend API URL and any other required keys:
 ```env
-# Example environment variables
-VITE_API_BASE_URL=https://youtube-backend-vdcg.onrender.com/api/v1
-# Add any other keys required by your application (e.g., Cloudinary configs, etc.)
+VITE_API_BASE_URL=https://your-backend-api-url.com/api/v1
 ```
 
-> **Note**: Vite uses the `VITE_` prefix to expose variables to your client-side code.
-
----
-
-## 🛠️ Getting Started
-
-### Prerequisites
-
-- Node.js (v18+ recommended)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository and navigate to the frontend folder.
-2. Install the dependencies:
-   ```bash
-   npm install
-   ```
-
-### Running the Development Server
-
-Start the Vite development server with Fast Refresh:
+**4. Start the Development Server**
 ```bash
 npm run dev
 ```
-Your app will be available at `http://localhost:5173` by default.
-
-### Build for Production
-
-To create an optimized production build:
-```bash
-npm run build
-```
-To preview the generated production build:
-```bash
-npm run preview
-```
+Navigate to `http://localhost:5173` in your browser.
 
 ---
 
-## 🔌 API Documentation Interface
+## 🔥 Usage
 
-This application interacts with the backend platform API. Some common modules being consumed by the frontend include:
-
-- **Users Module:** Authenticate, manage sessions, update user profile, avatar, cover image, and view watch history.
-- **Videos Module:** Fetch video feeds, upload video files, toggle publish status.
-- **Subscriptions Module:** Manage user channels, toggle subscriptions, and view subscriber count.
-- **Comments Module:** Add, update, and delete comments on a specific video.
-- **Likes Module:** Toggle likes for videos, comments, and tweets.
-- **Playlists Module:** Create playlists, add/remove videos to playlists.
-
-*(Note: Provide the Swagger/Postman API collection URL if available on the backend side so prospective developers can test endpoints directly.)*
+1. **Guest Users:** Can browse the main video feed, search for specific semantic terms, and watch videos.
+2. **Authentication:** Click the "Sign Up" button to create an account. This unlocks interactions like commenting, liking, and subscribing.
+3. **Uploading:** Once authenticated, navigate to the Dashboard to upload a new video file and thumbnail.
+4. **Playlists:** Click "Save" on any video to add it to a new or existing playlist managed in your User Profile.
 
 ---
 
-## 🤝 Contributing Guide
+## 🌐 Deployment Details
 
-We welcome contributions! Please follow these steps to contribute:
-
-1. **Fork the Repository**
-2. **Create a Feature Branch:** `git checkout -b feature/your-feature-name`
-3. **Commit your Changes:** Write clear, concise commit messages.
-   ```bash
-   git commit -m "feat: adding new UI component for XYZ"
-   ```
-4. **Push to the Branch:** `git push origin feature/your-feature-name`
-5. **Open a Pull Request:** Ensure your PR description explains what your changes do.
-
-### Code Guidelines
-- Keep components modular and reusable.
-- Put common components in `allComponents/ui`.
-- Follow the existing Tailwind CSS naming conventions for styles.
-- Avoid introducing unnecessary dependencies without prior discussion.
+This application is optimized for modern edge deployments.
+- **Platform:** Vercel / Netlify
+- **Build Command:** `npm run build`
+- **Output Directory:** `dist`
+*(Note: Ensure that client-side routing rewrites are configured for SPAs if deploying manually via `_redirects` or `vercel.json`)*
 
 ---
 
-## 📜 Linting & Code Quality
 
-This project leverages specific ESLint rules provided by Vite's minimal setup. Type-aware linting can be integrated if migrating to TypeScript in the future to improve maintainability within production applications.
+
+## 🧠 Learnings & Challenges
+
+Building a platform of this scale presented several valuable engineering challenges:
+- **Complex State Management:** Managing the state of video playback alongside real-time updates for likes and comments required careful Context structuring to prevent unnecessary re-renders.
+- **Form Handling at Scale:** Migrated to `react-hook-form` with `zod` schema validation to elegantly handle complex multi-part forms (like video uploads involving media files and metadata).
+- **Component Reusability:** Architected the UI using the Shadcn patterns, ensuring components like `Card`, `Button`, and `Input` were entirely decoupled from business logic and thoroughly reusable.
+- **Asynchronous Data Fetching:** Implemented robust Axios interceptors to silently handle JWT token refresh cycles without disrupting the user journey.
+
+---
+
+## 🚧 Future Improvements
+
+- [ ] **Infinite Scrolling:** Replace pagination with intersection-observer-based infinite feed scrolling.
+- [ ] **Dark/Light Mode Toggle:** Full theme support utilizing Tailwind's `dark:` variants.
+- [ ] **Optimistic UI Updates:** Provide instant visual feedback for likes and subscriptions before the server responds.
+- [ ] **Video Transcoding Support:** Integration with an HLS player (like Video.js) for adaptive bitrate streaming.
+
+---
+
+## 🤝 Contributing
+
+Contributions are always welcome! 
+
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+Please ensure your code follows the existing ESLint and Prettier configurations.
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+
+
