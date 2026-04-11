@@ -1,7 +1,8 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, } from "react";
 import api from "../../../lib/api";
 import { toast } from "react-hot-toast";
 import { DataContext } from "@/Context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function Create_playlist() { 
     const {setNewPlalistS,newPlaylistS}=useContext(DataContext);
@@ -9,6 +10,7 @@ function Create_playlist() {
         name: "",
         description: "",
     });
+    const Navigate = useNavigate();
     const storedUser = JSON.parse(localStorage.getItem("user"));
         // Fetch existing playlists if needed
     const handleSubmit = async (e) => {  
@@ -30,6 +32,10 @@ function Create_playlist() {
                 console.log("Playlist created:", response.data);
                 toast.success(`Playlist  created successfully! `);
                 // Optionally, reset form or show success message
+                setTimeout(() => {
+                    setNewPlalistS(false);
+                    Navigate("/Playlist");
+                }, 1500);
             } catch (err) {
                 console.error("Failed to create playlist:", err);
                 toast.error("Failed to create playlist. Please try again.");

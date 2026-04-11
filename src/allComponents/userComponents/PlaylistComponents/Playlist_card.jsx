@@ -44,7 +44,7 @@ function Card() {
   return (
     <>
       {playlists && playlists.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {playlists.map((playlist) => {
             const firstVideoThumbnail =
               playlist.videos && playlist.videos.length > 0 && playlist.videos[0].thumbnail
@@ -54,18 +54,18 @@ function Card() {
             return (
               <div
                 key={playlist._id}
-                className="group relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col h-[400px] border border-slate-800 cursor-pointer"
+                className="group relative bg-slate-900 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full border border-slate-800 cursor-pointer"
                 onClick={() => goToPlaylist(playlist._id)}
               >
                 {/* Playlist Thumbnail / Theme */}
-                <div className="relative h-60 w-full overflow-hidden">
+                <div className="relative aspect-video w-full overflow-hidden">
                   <img
                     src={firstVideoThumbnail}
                     alt={playlist.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   {/* Playlist Overlay - Stacking effect */}
-                  <div className="absolute top-0 right-0 bottom-0 w-1/3 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center border-l border-white/10">
+                  <div className="absolute top-0 right-0 bottom-0 w-1/3 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center border-l border-white/10 transition-colors group-hover:bg-blue-600/80">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-8 w-8 text-white mb-2"
@@ -83,28 +83,25 @@ function Card() {
                     <span className="text-white font-bold text-lg">
                       {playlist.videos?.length || 0}
                     </span>
-                    <span className="text-white/70 text-xs uppercase tracking-wider">
+                    <span className="text-white/80 text-[10px] uppercase font-semibold tracking-wider">
                       Videos
                     </span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-5 flex flex-col flex-grow bg-gradient-to-t from-slate-900 to-slate-800">
-                  <h2 className="text-xl font-bold text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
+                <div className="p-4 flex flex-col flex-grow bg-slate-900 border-t border-slate-800">
+                  <h2 className="text-lg font-semibold text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
                     {playlist.name}
                   </h2>
-                  <p className="mt-2 text-sm text-slate-400 line-clamp-2 italic">
+                  <p className="mt-1.5 text-sm text-slate-400 line-clamp-2">
                     {playlist.description || "No description provided."}
                   </p>
-                  
-                  <div className="mt-auto pt-4 flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase font-semibold">
-                      Updated recently
-                    </span>
-                    <button className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-full transition-colors border border-white/5">
-                      View Playlist
-                    </button>
+                  <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs font-medium text-slate-500">
+                    <span>View full playlist</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -112,9 +109,10 @@ function Card() {
           })}
         </div>
       ) : (
-        <p className="text-center text-gray-500">No playlists found.</p>
+        <p className="text-center text-slate-400 mt-10">No playlists found.</p>
       )}
     </>
   );
 }
-export default Card ;
+
+export default Card;
