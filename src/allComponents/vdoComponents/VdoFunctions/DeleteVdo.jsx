@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
-import { DataContext } from "../../../Context/UserContext";
+import { VideoContext } from "../../../contexts/VideoContext";
 import api from "../../../lib/api";
 import { useNavigate, useParams } from "react-router-dom";
 
 function DeleteVdo({ videoId }) {
-  const { setVideos } = useContext(DataContext);
+  const { setVideos } = useContext(VideoContext);
   const navigate = useNavigate();
   const { id, videoId: routeVideoId } = useParams();
   const resolvedVideoId = videoId || routeVideoId || id;
@@ -30,11 +30,7 @@ function DeleteVdo({ videoId }) {
         return;
       }
 
-      await api.delete(`/videos/${resolvedVideoId}`, {
-        headers: {
-          Authorization: `Bearer ${storedUser.accessToken}`,
-        },
-      });
+      await api.delete(`/videos/${resolvedVideoId}`);
 
       setVideos((prev) => prev.filter((video) => video._id !== resolvedVideoId));
       setStatus({ type: "success", text: "Video deleted successfully." });
@@ -51,64 +47,67 @@ function DeleteVdo({ videoId }) {
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-      <div className="mb-2 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Danger Zone</p>
-        <span className="h-2 w-2 rounded-full bg-red-500" />
+    <div className="max-w-md mx-auto p-8 mt-20 bg-white shadow-xl rounded-2xl border border-slate-100">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-slate-800">Delete Video</h2>
+        <span className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
       </div>
 
+      <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-xl">
+        <p className="text-sm text-red-700 font-medium">
+          Warning: This action is permanent and cannot be undone. All views, likes, and comments associated with this video will be lost.
+        </p>
+      </div>
+
+      {status.text && (
+        <div className={`mb-6 p-4 rounded-xl text-sm font-medium ${
+          status.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+        }`}>
+          {status.text}
+        </div>
+      )}
+
       {confirmStep === 0 && (
-        <button
-          type="button"
-          onClick={() => {
-            setConfirmStep(1);
-            setStatus({ type: "", text: "" });
-          }}
-          className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-black"
-        >
-          Delete Video
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+          >
+            Go Back
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirmStep(1)}
+            className="flex-1 rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-black"
+          >
+            Delete
+          </button>
+        </div>
       )}
 
       {confirmStep === 1 && (
-        <div className="space-y-2">
-          <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700">
-            Checkpoint 1: This action is permanent.
-          </p>
-          <p className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
-            Checkpoint 2: Confirm delete to remove video from platform.
-          </p>
-          <div className="flex gap-2">
+        <div className="space-y-4">
+          <p className="text-center text-sm font-bold text-slate-600">Are you absolutely sure?</p>
+          <div className="flex gap-3">
             <button
               type="button"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex-1 rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isDeleting ? "Deleting..." : "Yes, Delete"}
+              {isDeleting ? "Deleting..." : "Yes, Delete It"}
             </button>
             <button
               type="button"
               onClick={() => setConfirmStep(0)}
               disabled={isDeleting}
-              className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
             >
               Cancel
             </button>
           </div>
         </div>
-      )}
-
-      {status.text && (
-        <p
-          className={`mt-2 rounded-md px-3 py-2 text-xs ${
-            status.type === "success"
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-red-50 text-red-700"
-          }`}
-        >
-          {status.text}
-        </p>
       )}
     </div>
   );

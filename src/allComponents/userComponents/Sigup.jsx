@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { DataContext } from "../../Context/UserContext";
+import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
@@ -11,7 +11,7 @@ import { UploadCloud, User, Mail, Lock, Camera } from "lucide-react";
 
 function Signup() {
   const navigate = useNavigate();
-  const { setUser } = useContext(DataContext);
+  const { setUser } = useContext(AuthContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {

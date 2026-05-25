@@ -1,16 +1,22 @@
 import { useContext, useState, useEffect } from "react";
-import { DataContext } from "@/Context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { VideoContext } from "@/contexts/VideoContext";
 import { IoCloseSharp, IoChevronBack } from "react-icons/io5";
 import api from "../../lib/api";
 import { toast } from "react-hot-toast";
 
-function Vdofunc() {
-  const { setVdofunc, vdoTobeAdded } = useContext(DataContext);
+function Vdofunc({ video }) {
+  const navigate = useNavigate();
+  const { setVdofunc, vdoTobeAdded } = useContext(VideoContext);
   const [showPlaylists, setShowPlaylists] = useState(false);
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(false);
   
   const user = JSON.parse(localStorage.getItem("user"));
+  const isOwner = video?.owner?.username === user?.user?.username || video?.username === user?.user?.username;
+  
+
+// console.log("Video to be added:", vdoTobeAdded);
 
   const fetchPlaylists = async () => {
     if (!user?.user?._id) return;
@@ -42,16 +48,21 @@ function Vdofunc() {
     }
   };
   
-  const shareVideo = () => {
-    const videoUrl = window.location.href;
+  const handleShare = () => {
+    const videoUrl = `${window.location.origin}/video/${video?._id || vdoTobeAdded}`;
     navigator.clipboard.writeText(videoUrl)
-      .then(() => {
-        toast.success("Video URL copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy URL: ", err);
-        toast.error("Failed to copy URL");
-      });
+      .then(() => toast.success("Link copied!"))
+      .catch(() => toast.error("Failed to copy link"));
+  };
+
+  const handleEdit = () => {
+    setVdofunc(false);
+    navigate(`/updatevideo/${video?._id || vdoTobeAdded}`);
+  };
+
+  const handleDelete = () => {
+    setVdofunc(false);
+    navigate(`/deletevideo/${video?._id || vdoTobeAdded}`);
   };
 
   return (
@@ -86,8 +97,9 @@ function Vdofunc() {
                 </div>
                 <span>Add to Playlist</span>
               </button>
+
               <button 
-                onClick={shareVideo}
+                onClick={handleShare}
                 className="w-full group flex items-center gap-4 rounded-2xl bg-muted/30 px-5 py-4 text-left font-bold text-foreground transition hover:bg-muted/50"
               >
                 <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground">
@@ -95,9 +107,33 @@ function Vdofunc() {
                 </div>
                 <span>Share Video</span>
               </button>
+
+              {isOwner && (
+                <>
+                  <button 
+                    onClick={handleEdit}
+                    className="w-full group flex items-center gap-4 rounded-2xl bg-muted/30 px-5 py-4 text-left font-bold text-foreground transition hover:bg-muted/50"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground">
+                      <span className="text-xl">✏️</span>
+                    </div>
+                    <span>Edit Video</span>
+                  </button>
+                  <button 
+                    onClick={handleDelete}
+                    className="w-full group flex items-center gap-4 rounded-2xl bg-destructive/10 px-5 py-4 text-left font-bold text-destructive transition hover:bg-destructive/20 border border-destructive/20"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-destructive flex items-center justify-center text-white">
+                      <span className="text-xl">🗑️</span>
+                    </div>
+                    <span>Delete Video</span>
+                  </button>
+                </>
+              )}
+
               <button className="w-full group flex items-center gap-4 rounded-2xl bg-muted/30 px-5 py-4 text-left font-bold text-foreground transition hover:bg-destructive/10 hover:text-destructive">
-                <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center text-destructive">
-                  <span className="text-xl">📝</span>
+                <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center text-destructive/60">
+                  <span className="text-xl">🚩</span>
                 </div>
                 <span>Report Video</span>
               </button>
@@ -142,3 +178,4 @@ function Vdofunc() {
 }
 
 export default Vdofunc;
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { DataContext } from '../../Context/UserContext';
+import { AuthContext } from '../../contexts/AuthContext';
+import { UIContext } from '../../contexts/UIContext';
 import { useNavigate } from 'react-router-dom';
 import Card_for_vd0 from '../vdoComponents/Card_for_vd0';
 import { CgDetailsMore } from "react-icons/cg";
@@ -11,8 +12,8 @@ import AppShell from '../layout/AppShell';
 export default function UserDashboard() {
     const navigate = useNavigate();
 
-    const { user, setUser } = useContext(DataContext);
-    const {more,setMore}=useContext(DataContext);
+    const { user, setUser } = useContext(AuthContext);
+    const {more,setMore}=useContext(UIContext);
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

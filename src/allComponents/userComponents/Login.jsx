@@ -5,12 +5,12 @@ import { Label } from "@/allComponents/ui/label"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { useContext } from "react"
-import { DataContext } from "../../Context/UserContext"
+import { AuthContext } from "../../contexts/AuthContext"
 import api from "@/lib/api"
 
 function Login() {
   const navigate = useNavigate()
-  const { setUser } = useContext(DataContext);
+  const { setUser } = useContext(AuthContext);
 
   const {
     register,

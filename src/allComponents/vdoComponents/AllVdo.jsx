@@ -2,10 +2,10 @@ import Card_for_vd0 from "./Card_for_vd0";
 import SectionRow from "./SectionRow";
 import api from "../../lib/api";
 import { useEffect, useState, useContext } from "react";
-import { DataContext } from "../../Context/UserContext";
+import { VideoContext } from "../../contexts/VideoContext";
 
 function AllVdo() {
-  const ctx = useContext(DataContext);
+  const ctx = useContext(VideoContext);
   if (!ctx) return null;
 
   const { videos, setVideos } = ctx;

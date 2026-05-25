@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { GiCrossedBones } from "react-icons/gi";
-import { DataContext } from "@/Context/UserContext";
+import { AuthContext } from "@/contexts/AuthContext";
 import { useContext } from "react";
 import Logout from "./Logout";
 import ChangePassword from "./ChangePassword";
 
 function AccountCenter() {
   const navigate = useNavigate();
-  const {logout,setLogout,changePassword,setChangePassword}=useContext(DataContext)
+  const {logout,setLogout,changePassword,setChangePassword}=useContext(AuthContext)
 
   return (
     <div className="flex justify-center items-center h-[100%] mt-12 mb-12">

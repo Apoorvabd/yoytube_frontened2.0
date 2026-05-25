@@ -1,11 +1,11 @@
 import { GiCrossedBones } from "react-icons/gi";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataContext } from "../../Context/UserContext";
+import { UIContext } from "../../contexts/UIContext";
 
 
 function UserMore(){
-    const {more,setMore}= useContext(DataContext);
+    const {more,setMore}= useContext(UIContext);
     const navigate = useNavigate();
 
     // handler that will close the panel then navigate

@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import Sidevdoinvdo from "./Sidevdoinvdo";
 import VdoComments from "./Vdocomments";
 import { Heart, Share2, MoreHorizontal, CheckCircle2, Play, Users, Eye, Calendar } from "lucide-react";
-import { DataContext } from "@/Context/UserContext";
+import { VideoContext } from "@/contexts/VideoContext";
 import VdoFunc from "./VdoFunc.jsx";
 import api, { getAuthHeaders, getStoredUser } from "@/lib/api";
 import AppShell from "../layout/AppShell";
@@ -20,7 +20,7 @@ function Showvdo() {
   const [vdoowner, setVdoOwner] = useState(null);
   const [liked, setLiked] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const { vdofunc, setVdofunc, setVdoTobeAdded } = useContext(DataContext);
+  const { vdofunc, setVdofunc, setVdoTobeAdded,vdoTobeAdded } = useContext(VideoContext);
 
   const checkSubscriptionStatus = async (ownerId) => {
     try {
@@ -56,6 +56,7 @@ function Showvdo() {
         setVideo(v);
         setVdoOwner(o);
         setVdoTobeAdded(v._id);
+        console.log("Fetched video:", vdoTobeAdded);
         if (o?._id) checkSubscriptionStatus(o._id);
       } catch (err) {
         toast.error("Failed to load video");
@@ -113,7 +114,7 @@ function Showvdo() {
       {vdofunc && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/40 backdrop-blur-md transition-opacity duration-300">
           <div className="animate-in fade-in zoom-in-95 duration-200">
-            <VdoFunc />
+            <VdoFunc video={vdoowner} />
           </div>
         </div>
       )}
@@ -182,7 +183,10 @@ function Showvdo() {
                 />
                 <ActionBtn 
                   icon={<MoreHorizontal size={20} className="text-slate-600" />} 
-                  onClick={() => setVdofunc(true)} 
+                  onClick={() => {
+                    setVdoTobeAdded(video?._id || id);
+                    setVdofunc(true);
+                  }} 
                 />
               </div>
             </div>

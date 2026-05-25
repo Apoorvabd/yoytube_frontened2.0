@@ -1,7 +1,7 @@
 
 
 import { useContext, useEffect, useState } from 'react';
-import { DataContext } from '@/Context/UserContext';
+import { AuthContext } from '@/contexts/AuthContext';
 import Card_for_vd0 from '../vdoComponents/Card_for_vd0';
 import api from '../../lib/api';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ import AppShell from '../layout/AppShell';
 
 export default function LikedVdo() {
     const navigate = useNavigate();
-    const { user, setUser } = useContext(DataContext);
+    const { user, setUser } = useContext(AuthContext);
     const [likedVideos, setLikedVideos] = useState([]);
     const storedUser = JSON.parse(localStorage.getItem("user"));
     useEffect(() => {

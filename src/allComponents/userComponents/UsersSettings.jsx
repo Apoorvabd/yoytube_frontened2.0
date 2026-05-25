@@ -1,13 +1,13 @@
 
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataContext } from "../../Context/UserContext";
+import { UIContext } from "../../contexts/UIContext";
 import { GiCrossedBones } from "react-icons/gi";
 import AppShell from "../layout/AppShell";
 import { Settings, User, Bell, Shield, HelpCircle, UserRound, MessageSquare, Info, LogOut } from "lucide-react";
 
 function UsersSettings() {
-  const { setUsersSettings } = useContext(DataContext);
+  const { setUsersSettings } = useContext(UIContext);
   const navigate = useNavigate();
 
   const go = (path) => {

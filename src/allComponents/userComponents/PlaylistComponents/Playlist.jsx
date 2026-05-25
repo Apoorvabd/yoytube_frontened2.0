@@ -1,12 +1,12 @@
 import Card from "./Playlist_card";
-import { DataContext } from "@/Context/UserContext";
+import { UIContext } from "@/contexts/UIContext";
 import { useContext } from "react";
 import Create_playlist from "./Create_playlist";
 
 
 
 export  function Playlist() {
-    const {setNewPlalistS,newPlaylistS}=useContext(DataContext);
+    const {setNewPlalistS,newPlaylistS}=useContext(UIContext);
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-8 border-b border-slate-700 pb-4">

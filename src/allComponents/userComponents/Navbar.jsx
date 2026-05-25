@@ -1,12 +1,12 @@
 import { Button } from "../ui/button";
 import { useContext } from "react";
-import { DataContext } from "../../Context/UserContext";
+import { AuthContext } from "../../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   // Navbar for a video sharing platform
-  const ctx = useContext(DataContext);
+  const ctx = useContext(AuthContext);
   const navigate = useNavigate();
 
   if (!ctx) return null;

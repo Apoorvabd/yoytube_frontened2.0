@@ -1,10 +1,10 @@
 import Card_for_vd0 from "./Card_for_vd0";
 import api from "../../lib/api";
 import { useEffect, useState, useContext } from "react";
-import { DataContext } from "../../Context/UserContext";
+import { VideoContext } from "../../contexts/VideoContext";
 
 function Sidevdoinvdo() {
-  const ctx = useContext(DataContext);
+  const ctx = useContext(VideoContext);
   if (!ctx) return null;
 
   const { videos, setVideos } = ctx;

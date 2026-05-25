@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext, } from "react";
 import api from "../../../lib/api";
 import { toast } from "react-hot-toast";
-import { DataContext } from "@/Context/UserContext";
+import { UIContext } from "@/contexts/UIContext";
 import { useNavigate } from "react-router-dom";
 
 function Create_playlist() { 
-    const {setNewPlalistS,newPlaylistS}=useContext(DataContext);
+    const {setNewPlalistS,newPlaylistS}=useContext(UIContext);
     const [newPlaylist, setNewPlaylist] = useState({
         name: "",
         description: "",

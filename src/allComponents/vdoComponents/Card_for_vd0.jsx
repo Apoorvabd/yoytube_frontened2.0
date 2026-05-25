@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdMore } from "react-icons/io";
-import { Play, Share2, Bookmark, Trash2, Clock, User } from "lucide-react";
+import { Play, Share2, Bookmark, Trash2, Clock, User, Pencil } from "lucide-react";
 
 /**
  * MenuButton sub-component for the video card options
@@ -31,7 +31,6 @@ const Card_for_vd0 = ({ video, compact = false }) => {
   
   // Safely get user from localStorage
   const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-  console.log("Card_for_vd0 - video prop:", video);
 
   if (!video) return null;
 
@@ -80,10 +79,15 @@ const Card_for_vd0 = ({ video, compact = false }) => {
     setShowMenu(false);
   };
 
-  const onDelete = (e) => {
-    setShowMenu(false);
-    navigate(`/deletevideo/${video._id}`);
-  };
+    const onEdit = (e) => {
+      setShowMenu(false);
+      navigate(`/updatevideo/${video._id}`);
+    };
+
+    const onDelete = (e) => {
+      setShowMenu(false);
+      navigate(`/deletevideo/${video._id}`);
+    };
 
   const formattedDate = video.createdAt
     ? new Intl.DateTimeFormat("en-US", {
@@ -110,17 +114,17 @@ const Card_for_vd0 = ({ video, compact = false }) => {
           />
           
           {/* Play Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100 z-0">
             <div className="flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-xl md:rounded-2xl bg-white/90 text-primary shadow-xl transition-transform duration-300 group-hover:scale-110 active:scale-95">
               <Play size={20} fill="currentColor" className="ml-0.5 md:ml-1" />
             </div>
           </div>
+        </div>
 
-          {/* Duration Badge */}
-          <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center gap-1.5 rounded-lg md:rounded-xl border border-white/20 bg-black/60 px-2 md:px-3 py-1 md:py-1.5 text-[9px] md:text-[11px] font-bold text-white backdrop-blur-md">
-            <Clock size={10} className="md:w-3 md:h-3" />
-            <span>{video.duration || "00:00"}</span>
-          </div>
+        {/* Duration Badge */}
+        <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center gap-1.5 rounded-lg md:rounded-xl border border-white/20 bg-black/60 px-2 md:px-3 py-1 md:py-1.5 text-[9px] md:text-[11px] font-bold text-white backdrop-blur-md">
+          <Clock size={10} className="md:w-3 md:h-3" />
+          <span>{video.duration || "00:00"}</span>
         </div>
       </div>
 
@@ -200,6 +204,11 @@ const Card_for_vd0 = ({ video, compact = false }) => {
                   {isOwner && (
                     <>
                       <div className="my-2 h-px bg-slate-100 dark:bg-slate-800" />
+                      <MenuButton 
+                        icon={<Pencil size={18} />} 
+                        label="Edit Video" 
+                        onClick={onEdit} 
+                      />
                       <MenuButton 
                         icon={<Trash2 size={18} />} 
                         label="Delete Video" 
