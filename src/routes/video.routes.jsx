@@ -19,6 +19,7 @@ const VideoRoutes = () => {
           path="/video/:id"
           element={<VideoWrapper />}
         />
+        <Route path="*" element={null} />
       </Routes>
     </Suspense>
   );

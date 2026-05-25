@@ -38,6 +38,7 @@ const UserRoutes = () => {
         <Route path="/deletevideo/:id" element={<DeleteVdo/>}/>
         <Route path="/updatevideo/:id" element={<UpdateVdo/>}/>
         <Route path="/playlist/:id" element={<PlaylistDetail/>}/>
+        <Route path="*" element={null} />
       </Routes>
     </Suspense>
   );
