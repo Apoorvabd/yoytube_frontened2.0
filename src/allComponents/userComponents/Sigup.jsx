@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import z from "zod";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -8,28 +9,57 @@ import { Button } from "@/allComponents/ui/button";
 import { Input } from "@/allComponents/ui/input";
 import { Label } from "@/allComponents/ui/label";
 import { UploadCloud, User, Mail, Lock, Camera } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const schema = z.object({
+  username: z.string().min(5, "Username must be at least 5 characters long"),
+  fullName: z.string().min(3, "Full name must be more than 3 characters long"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+  avatar: z.any().optional(),
+  cover: z.any().optional(),
+})
 
 function Signup() {
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [avatarFileName, setAvatarFileName] = useState("");
+  const [coverFileName, setCoverFileName] = useState("");
+
+  const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({resolver:zodResolver(schema)});
+
+  const errorTextClass = "mt-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600";
 
   const onSignup = async (data) => {
+    const avatarFile = data.avatar?.[0];
+    const coverFile = data.cover?.[0];
+
+    if (avatarFile && avatarFile.size > MAX_IMAGE_SIZE) {
+      toast.error("Avatar image must be less than 4 MB");
+      return;
+    }
+
+    if (coverFile && coverFile.size > MAX_IMAGE_SIZE) {
+      toast.error("Studio cover must be less than 4 MB");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("username", data.username);
     formData.append("fullName", data.fullName);
     formData.append("email", data.email);
     formData.append("password", data.password);
     
-    if (data.avatar?.[0]) formData.append("avatar", data.avatar[0]);
-    if (data.cover?.[0]) formData.append("cover", data.cover[0]);
-
+    if (avatarFile) formData.append("avatar", avatarFile);
+    if (coverFile) formData.append("cover", coverFile);
+{console.log("Form Data:", avatarFile, coverFile, data.username, data.fullName, data.email, data.password);}
     try {
       setIsSubmitting(true);
       const response = await api.post("/users/register", formData);
@@ -79,39 +109,61 @@ function Signup() {
                 <div className="space-y-3">
                   <Label className="text-[10px] text-black uppercase tracking-[0.2em] text-primary ml-1">Username</Label>
                   <Input
-                    {...register("username", { required: "Username is required" })}
+                    {...register("username")}
                     className="h-14 bg-muted border-border text-black focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
                     placeholder="skywalker_01"
                   />
+                  {errors.username?.message && (
+                    <p className={errorTextClass}>{errors.username.message}</p>
+                  )}
                 </div>
 
                 <div className="space-y-3">
                   <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Full Name</Label>
                   <Input
-                    {...register("fullName", { required: "Full name is required" })}
+                    {...register("fullName")}
                     className="h-14 bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all text-black"
                     placeholder="Anakin Skywalker"
                   />
+                  {errors.fullName?.message && (
+                    <p className={errorTextClass}>{errors.fullName.message}</p>
+                  )}
                 </div>
 
                 <div className="space-y-3">
                   <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Email</Label>
                   <Input
-                    {...register("email", { required: "Email is required" })}
+                    {...register("email")}
                     type="email"
                     className="h-14 bg-muted border-border text-black focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
                     placeholder="anakin@jedi.com"
                   />
+                  {errors.email?.message && <p className={errorTextClass}>{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Master Key</Label>
+                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Password</Label>
                   <Input
-                    {...register("password", { required: "Password is required" })}
+                    {...register("password")}
                     type="password"
                     className="h-14 bg-muted border-border text-black  focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
                     placeholder="••••••••"
                   />
+                  {errors.password?.message && (
+                    <p className={errorTextClass}>{errors.password.message}</p>
+                  )}
+                </div>
+                 <div className="space-y-3">
+                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Confirm Password</Label>
+                  <Input
+                    {...register("password")}
+                    type="password"
+                    className="h-14 bg-muted border-border text-black  focus:border-primary focus:ring-1 focus:ring-primary rounded-2xl transition-all"
+                    placeholder="••••••••"
+                  />
+                  {errors.password?.message && (
+                    <p className={errorTextClass}>{errors.password.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -123,9 +175,38 @@ function Signup() {
                     <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-muted-foreground shadow-sm group-hover:scale-110 transition-transform">
                       <Camera size={20} />
                     </div>
+
                     <span className="mt-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Select Avatar</span>
-                    <input {...register("avatar")} type="file" className="hidden" accept="image/*" />
+                    <input
+                      {...register("avatar", {
+                        onChange: (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) {
+                            setAvatarFileName("");
+                            return;
+                          }
+
+                          if (file.size > MAX_IMAGE_SIZE) {
+                            toast.error("Avatar image must be less than 4 MB");
+                            e.target.value = "";
+                            setAvatarFileName("");
+                            return;
+                          }
+
+                          setAvatarFileName(file.name);
+                        },
+                      })}
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                    />
+
                   </label>
+                  {avatarFileName && (
+                    <div className="rounded-xl border border-border bg-background px-3 py-2 text-xs font-medium text-foreground shadow-sm">
+                      {avatarFileName}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3">
@@ -135,8 +216,35 @@ function Signup() {
                       <UploadCloud size={20} />
                     </div>
                     <span className="mt-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Studio Cover</span>
-                    <input {...register("cover")} type="file" className="hidden" accept="image/*" />
+                    <input
+                      {...register("cover", {
+                        onChange: (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) {
+                            setCoverFileName("");
+                            return;
+                          }
+
+                          if (file.size > MAX_IMAGE_SIZE) {
+                            toast.error("Studio cover must be less than 4 MB");
+                            e.target.value = "";
+                            setCoverFileName("");
+                            return;
+                          }
+
+                          setCoverFileName(file.name);
+                        },
+                      })}
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                    />
                   </label>
+                  {coverFileName && (
+                    <div className="rounded-xl border border-border bg-background px-3 py-2 text-xs font-medium text-foreground shadow-sm">
+                      {coverFileName}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

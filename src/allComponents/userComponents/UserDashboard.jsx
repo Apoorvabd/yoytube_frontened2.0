@@ -160,7 +160,7 @@ export default function UserDashboard() {
                         </div>
                     )}
 
-                    {!!error && <p className="mt-3 text-sm text-[#ff7b82]">{error}</p>}
+                    {!!error && <p className="mt-5 text-lg text-[#5a4803]">Upload you first Video</p>}
                 </section>
             </div>
         </AppShell>

@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { Loader } from '../allComponents/layout/Loader';
 
 const UserDashboard = React.lazy(() => import('../allComponents/userComponents/UserDashboard'));
 const Uploadvdo = React.lazy(() => import('../allComponents/userComponents/Uploadvdo'));
@@ -16,11 +17,12 @@ const WatchHistory = React.lazy(() => import('../allComponents/userComponents/Wa
 const Subscribers = React.lazy(() => import('../allComponents/userComponents/Subscribers'));
 const DeleteVdo = React.lazy(() => import('../allComponents/vdoComponents/VdoFunctions/DeleteVdo'));
 const UpdateVdo = React.lazy(() => import('../allComponents/vdoComponents/VdoFunctions/EditVdo'));
-const PlaylistDetail = React.lazy(() => import('../allComponents/userComponents/PlaylistComponents/PlaylistDetail'));
+const PlaylistDetail = React.lazy(() => import('../allComponents/userComponents/PlaylistComponents/UsersPlaylist'));
+const Logout = React.lazy(() => import('../allComponents/userComponents/Logout'));
 
 const UserRoutes = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/Upload" element={<Uploadvdo />} />
         <Route path="/Dashboard" element={<UserDashboard />} />
@@ -39,6 +41,7 @@ const UserRoutes = () => {
         <Route path="/updatevideo/:id" element={<UpdateVdo/>}/>
         <Route path="/playlist/:id" element={<PlaylistDetail/>}/>
         <Route path="*" element={null} />
+        <Route path="/logout" element={<Logout/>}/>
       </Routes>
     </Suspense>
   );

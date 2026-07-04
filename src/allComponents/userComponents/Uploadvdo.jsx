@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import { UploadCloud, X, Film, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
+import { UploadCloud, X, Film, Image as ImageIcon, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import api, { getAuthHeaders } from "../../lib/api";
 import AppShell from "../layout/AppShell";
 
-/**
- * Uploadvdo component rewritten for a premium light theme.
- * Removed framer-motion in favor of native Tailwind transitions.
- * Uses UploadCloud from lucide-react and surface-card for consistency.
- */
 function Uploadvdo() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
@@ -21,7 +16,7 @@ function Uploadvdo() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!title.trim() || !description.trim()) {
       toast.error("Please provide a title and description");
       return;
@@ -33,6 +28,8 @@ function Uploadvdo() {
     }
 
     setUploading(true);
+    setProgress(0);
+
     const formData = new FormData();
     formData.append("videoFile", videoFile);
     if (thumbnailFile) {
@@ -48,15 +45,14 @@ function Uploadvdo() {
           "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
+          if (!progressEvent.total) return;
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setProgress(percentCompleted);
         },
       });
 
-      toast.success("Masterpiece published successfully!");
-      setTimeout(() => navigate("/Dashboard"), 1500);
+      toast.success("Video uploaded successfully");
+      setTimeout(() => navigate("/Dashboard"), 1200);
     } catch (err) {
       console.error("Upload error:", err);
       toast.error(err.response?.data?.message || "Publishing failed");
@@ -67,90 +63,89 @@ function Uploadvdo() {
 
   return (
     <AppShell>
-      <div className="max-w-5xl mx-auto py-10 px-4">
-        <header className="mb-12 text-center">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-3xl bg-primary/10 text-primary mb-6 animate-pulse">
-            <UploadCloud size={32} />
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <header className="mb-10 text-center">
+          <div className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-600 shadow-sm">
+            <UploadCloud size={26} />
           </div>
-          <h1 className="text-5xl font-[1000] tracking-tight text-slate-900 leading-tight">
-            Publish your <span className="text-primary italic">vision.</span>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Upload your video
           </h1>
-          <p className="mt-4 text-lg font-medium text-slate-500 max-w-xl mx-auto">
-            Share your high-definition content with a global audience of creators and enthusiasts.
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500 sm:text-base">
+            Keep it simple. Add a title, a description, and your files, then publish.
           </p>
         </header>
 
-        <form onSubmit={onSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content Areas */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="surface-card bg-white p-8 border-slate-200/60 shadow-xl shadow-slate-200/40">
-              <div className="space-y-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">
-                    Video Title
+        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+                    Title
                   </label>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter a captivating title"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-lg font-bold text-slate-900 focus:bg-white focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                    placeholder="Enter a clean title"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:ring-4 focus:ring-blue-50"
                     required
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">
-                    Story & Description
+                <div className="space-y-2">
+                  <label className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+                    Description
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Tell us about your creation..."
-                    className="w-full h-48 bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-base font-medium text-slate-700 focus:bg-white focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all resize-none placeholder:text-slate-400"
+                    placeholder="Write a short description..."
+                    className="h-40 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:ring-4 focus:ring-blue-50"
                     required
                   />
                 </div>
               </div>
             </div>
 
-            {/* Upload Zone */}
-            <div className={`surface-card p-8 border-2 border-dashed transition-all duration-300 ${
-              videoFile 
-                ? "bg-indigo-50/50 border-indigo-200" 
-                : "bg-white border-slate-200 hover:border-primary/40"
-            }`}>
+            <div
+              className={`rounded-2xl border border-dashed p-6 transition-colors ${
+                videoFile ? "border-blue-200 bg-blue-50/40" : "border-slate-200 bg-white hover:border-blue-300"
+              }`}
+            >
               {!videoFile ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="h-20 w-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mb-6 group-hover:scale-110 transition-transform">
-                    <Film size={32} />
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-400">
+                    <Film size={28} />
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 mb-2">Select your master file</h3>
-                  <p className="text-sm font-medium text-slate-500 mb-8">MP4, WebM or OGG files up to 2GB supported.</p>
-                  <label className="premium-btn-primary cursor-pointer px-10">
+                  <h3 className="mb-2 text-lg font-medium text-slate-900">Add your video file</h3>
+                  <p className="mb-6 max-w-sm text-sm leading-6 text-slate-500">MP4, WebM, or OGG files are supported.</p>
+                  <label className="inline-flex cursor-pointer items-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700">
                     <input
                       type="file"
                       accept="video/*"
                       onChange={(e) => setVideoFile(e.target.files[0])}
                       className="hidden"
                     />
-                    Choose Video
+                    Choose video
                   </label>
                 </div>
               ) : (
-                <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-indigo-100 shadow-sm">
+                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
                       <Film size={20} />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-slate-900 truncate max-w-[200px] md:max-w-xs">{videoFile.name}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">Ready for processing</p>
+                      <p className="max-w-[200px] truncate text-sm font-medium text-slate-900 md:max-w-xs">{videoFile.name}</p>
+                      <p className="text-xs text-slate-500">Ready to upload</p>
                     </div>
                   </div>
-                  <button 
+                  <button
+                    type="button"
                     onClick={() => setVideoFile(null)}
-                    className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
                   >
                     <X size={18} />
                   </button>
@@ -159,78 +154,76 @@ function Uploadvdo() {
             </div>
           </div>
 
-          {/* Sidebar Area */}
           <div className="space-y-6">
-            <div className="surface-card bg-white p-6 border-slate-200/60 shadow-xl shadow-slate-200/40">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-4 block">
-                Visual Cover
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <label className="mb-4 block text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+                Thumbnail
               </label>
-              
-              <div 
-                className={`relative aspect-video rounded-2xl overflow-hidden border-2 border-dashed transition-all duration-300 ${
-                  thumbnailFile 
-                    ? "border-emerald-200 bg-emerald-50/20" 
-                    : "border-slate-200 bg-slate-50/50 hover:bg-slate-50"
+
+              <div
+                className={`relative aspect-video overflow-hidden rounded-xl border border-dashed transition-colors ${
+                  thumbnailFile ? "border-blue-200 bg-blue-50/40" : "border-slate-200 bg-slate-50"
                 }`}
               >
                 {thumbnailFile ? (
                   <>
-                    <img 
-                      src={URL.createObjectURL(thumbnailFile)} 
-                      className="h-full w-full object-cover" 
-                      alt="Thumbnail Preview" 
+                    <img
+                      src={URL.createObjectURL(thumbnailFile)}
+                      className="h-full w-full object-cover"
+                      alt="Thumbnail Preview"
                     />
-                    <button 
+                    <button
+                      type="button"
                       onClick={() => setThumbnailFile(null)}
-                      className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/60 text-white backdrop-blur-md flex items-center justify-center hover:bg-red-500 transition-colors"
+                      className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-600 shadow-sm transition hover:text-slate-900"
                     >
                       <X size={14} />
                     </button>
                   </>
                 ) : (
-                  <label className="flex flex-col items-center justify-center h-full cursor-pointer">
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={(e) => setThumbnailFile(e.target.files[0])} 
-                      className="hidden" 
+                  <label className="flex h-full cursor-pointer flex-col items-center justify-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setThumbnailFile(e.target.files[0])}
+                      className="hidden"
                     />
-                    <ImageIcon size={24} className="text-slate-300 mb-2" />
-                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Add Thumbnail</span>
+                    <ImageIcon size={24} className="mb-2 text-slate-300" />
+                    <span className="text-xs font-medium text-slate-500">Add thumbnail</span>
                   </label>
                 )}
               </div>
-              <p className="mt-4 text-[11px] font-medium text-slate-400 leading-relaxed italic">
-                A professional thumbnail significantly increases your click-through rate.
+              <p className="mt-4 text-sm leading-6 text-slate-500">
+                A simple, clear thumbnail helps viewers understand your video faster.
               </p>
             </div>
 
-            <div className="surface-card bg-slate-900 p-8 text-white shadow-2xl shadow-slate-900/20">
-              <h4 className="text-lg font-black mb-6 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Publish Settings
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h4 className="mb-5 flex items-center gap-2 text-sm font-medium text-slate-900">
+                <span className="h-2 w-2 rounded-full bg-blue-600" />
+                Publish settings
               </h4>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-3 text-sm font-bold text-slate-400">
-                  <CheckCircle2 size={16} className="text-primary" />
+
+              <div className="mb-6 space-y-3">
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <CheckCircle2 size={16} className="text-blue-600" />
                   <span>Public visibility</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm font-bold text-slate-400">
-                  <CheckCircle2 size={16} className="text-primary" />
+                <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <CheckCircle2 size={16} className="text-blue-600" />
                   <span>HQ format enabled</span>
                 </div>
               </div>
 
               {uploading && (
                 <div className="mb-6 space-y-2">
-                  <div className="flex items-center justify-between text-[10px] font-black tracking-widest uppercase">
-                    <span>Compressing</span>
+                  <div className="flex items-center justify-between text-xs font-medium uppercase tracking-[0.14em] text-slate-500">
+                    <span>Uploading</span>
                     <span>{progress}%</span>
                   </div>
-                  <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary transition-all duration-300"
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-blue-600 transition-all duration-300"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -240,18 +233,20 @@ function Uploadvdo() {
               <button
                 type="submit"
                 disabled={uploading}
-                className="w-full premium-btn-primary h-14 bg-primary hover:bg-primary/90 text-white shadow-primary/20"
+                className="flex h-12 w-full items-center justify-center rounded-xl bg-blue-600 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
               >
                 {uploading ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 border-2 border-white/30 border-t-white animate-spin rounded-full" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                     Publishing...
                   </div>
-                ) : "Publish Masterpiece"}
+                ) : (
+                  "Publish video"
+                )}
               </button>
-              
-              <p className="mt-4 text-[10px] text-center font-bold text-slate-500 uppercase tracking-[0.1em]">
-                By publishing, you agree to our Content Guidelines.
+
+              <p className="mt-4 text-center text-xs text-slate-400">
+                By publishing, you agree to the content guidelines.
               </p>
             </div>
           </div>

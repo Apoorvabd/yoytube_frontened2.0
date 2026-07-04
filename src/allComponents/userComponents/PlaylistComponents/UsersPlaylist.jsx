@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import  Loader  from "../../layout/Loader";
 
 export default function PlaylistDetail() {
   const { id } = useParams();
@@ -54,7 +55,7 @@ export default function PlaylistDetail() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader/>;
   if (!playlist) return <div>Playlist not found</div>;
 
   return (

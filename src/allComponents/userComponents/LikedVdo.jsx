@@ -6,11 +6,13 @@ import Card_for_vd0 from '../vdoComponents/Card_for_vd0';
 import api from '../../lib/api';
 import { useNavigate } from 'react-router-dom';
 import AppShell from '../layout/AppShell';
+import { Loader } from '../layout/Loader';
 
 export default function LikedVdo() {
     const navigate = useNavigate();
     const { user, setUser } = useContext(AuthContext);
     const [likedVideos, setLikedVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
     const storedUser = JSON.parse(localStorage.getItem("user"));
     useEffect(() => {
         if (!storedUser || !storedUser.accessToken) {
@@ -36,11 +38,21 @@ export default function LikedVdo() {
         } catch (error) {
             console.error("Error fetching liked videos:", error);
         }
+        finally {
+            setLoading(false);
+        }
     };
       // Dependency array includes navigate and storedUser    
-
-    
+   {if (loading) {
+        return (
+            <div className="min-h-[75vh] flex items-center justify-center px-4 py-20">
+                <Loader />
+            </div>
+        );
+    }
+    else{
     return (
+        
         <AppShell>
             <div className="space-y-6">
                 <h2 className="text-3xl font-black text-foreground">Liked Videos</h2>
@@ -63,4 +75,5 @@ export default function LikedVdo() {
             </div>
         </AppShell>
     );
+}}
 }   

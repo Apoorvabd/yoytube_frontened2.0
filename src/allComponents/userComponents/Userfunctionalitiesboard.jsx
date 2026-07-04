@@ -57,7 +57,7 @@ function UserMore(){
                     <button
                         className="text-left text-lg font-medium hover:text-red-600 transition-colors  shadow-xl
                         rounded-lg px-4 py-2 bg-white"
-                        onClick={() => go("/likedvideos")}
+                        onClick={() => go("/liked-videos")}
                     >
                         💬 Liked Videos
                     </button>
@@ -78,7 +78,7 @@ function UserMore(){
                       <button
                         className="text-left text-lg font-medium hover:text-red-600 transition-colors  shadow-xl
                         rounded-lg px-4 py-2 bg-white"
-                        onClick={() => navigate("/subscribedchannels")}
+                        onClick={() => go("/subscriptions")}
                     >
                       subscribed channels
                     </button>
