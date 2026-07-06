@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
+import {Loader} from "../layout/Loader";
 
 
 function Subscribers(){
@@ -41,6 +42,9 @@ function Subscribers(){
             fetchSubscribers();
         }
     }, [channelId, accessToken]);
+    if(loading){
+        <Loader/>
+    }
 
     return (
         <div className="p-4">

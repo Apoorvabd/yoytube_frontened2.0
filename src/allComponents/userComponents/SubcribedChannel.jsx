@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
 import AppShell from "../layout/AppShell";
+import {Loader} from "../layout/Loader";
 
 function SubscribedChannel() {
 
@@ -45,6 +46,9 @@ function SubscribedChannel() {
     }
 
   }, [userId]);
+  if(loading){
+    <Loader/>
+  }
 
   return (
     <AppShell>

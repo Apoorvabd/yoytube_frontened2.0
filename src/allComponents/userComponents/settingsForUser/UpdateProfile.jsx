@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import api, { getAuthHeaders, getStoredUser } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import AppShell from "../../layout/AppShell";
+import { ArrowLeft } from "lucide-react";
 
 function UpdateProfile() {
   const navigate = useNavigate();
@@ -9,121 +11,61 @@ function UpdateProfile() {
 
   const [email, setEmail] = useState(storedUser?.user?.email || "");
   const [fullName, setFullName] = useState(storedUser?.user?.fullName || "");
-
   const [avatarFile, setAvatarFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [coverLoading, setCoverLoading] = useState(false);
 
-  // ================= DETAILS =================
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
     if (!fullName.trim() || !email.trim()) {
       toast.error("Full name and email are required");
       return;
     }
-
     try {
       setDetailsLoading(true);
-      const response = await api.post(
-        "/users/updateProfile",
-        { fullName, email },
-        {
-          headers: getAuthHeaders(),
-        }
-      );
-
+      const response = await api.post("/users/updateProfile", { fullName, email }, { headers: getAuthHeaders() });
       const updatedUser = response.data?.data;
       if (updatedUser && storedUser?.accessToken) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...storedUser,
-            user: {
-              ...storedUser.user,
-              ...updatedUser,
-            },
-          })
-        );
+        localStorage.setItem("user", JSON.stringify({ ...storedUser, user: { ...storedUser.user, ...updatedUser } }));
       }
-
       toast.success("Profile updated successfully ✅");
-      console.log(response.data);
     } catch (err) {
-      console.log(err);
       toast.error(err?.response?.data?.message || "Error updating profile ❌");
     } finally {
       setDetailsLoading(false);
     }
   };
 
-  // ================= AVATAR =================
   const handleAvatarSubmit = async (e) => {
     e.preventDefault();
-
+    if (!avatarFile) { toast.error("Select an avatar first"); return; }
     try {
-      if (!avatarFile) {
-        toast.error("Select avatar first");
-        return;
-      }
-
+      setAvatarLoading(true);
       const formData = new FormData();
       formData.append("avatar", avatarFile);
-
-      setAvatarLoading(true);
-      const response = await api.patch(
-        "/users/updateavatar",
-        formData,
-        {
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
+      await api.patch("/users/updateavatar", formData, { headers: { ...getAuthHeaders(), "Content-Type": "multipart/form-data" } });
       toast.success("Avatar updated ✅");
       setAvatarFile(null);
-      console.log(response.data);
     } catch (err) {
-      console.log(err);
       toast.error(err?.response?.data?.message || "Error updating avatar ❌");
     } finally {
       setAvatarLoading(false);
     }
   };
 
-  // ================= COVER =================
   const handleCoverSubmit = async (e) => {
     e.preventDefault();
-
+    if (!coverFile) { toast.error("Select a cover image first"); return; }
     try {
-      if (!coverFile) {
-        toast.error("Select cover image first");
-        return;
-      }
-
+      setCoverLoading(true);
       const formData = new FormData();
       formData.append("coverImage", coverFile);
-
-      setCoverLoading(true);
-      const response = await api.patch(
-        "/users/updatecover",
-        formData,
-        {
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
+      await api.patch("/users/updatecover", formData, { headers: { ...getAuthHeaders(), "Content-Type": "multipart/form-data" } });
       toast.success("Cover updated ✅");
       setCoverFile(null);
-      console.log(response.data);
     } catch (err) {
-      console.log(err);
       toast.error(err?.response?.data?.message || "Error updating cover ❌");
     } finally {
       setCoverLoading(false);
@@ -131,77 +73,117 @@ function UpdateProfile() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-8 space-y-10">
+    <AppShell>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/10 py-10 px-4 sm:px-6">
+        <div className="max-w-xl mx-auto">
 
-        <h2 className="text-3xl font-bold text-center">Update Profile</h2>
-        <button
-          type="button"
-          className="w-fit rounded-md border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
-          onClick={() => navigate(-1)}
-        >
-          Back
-        </button>
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-10">
+            <button
+              onClick={() => navigate(-1)}
+              className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <div>
+              <p className="text-xs font-black uppercase tracking-widest text-indigo-500 mb-0.5">Account Center</p>
+              <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Edit Profile</h1>
+            </div>
+          </div>
 
-        {/* ================= DETAILS FORM ================= */}
-        <form onSubmit={handleDetailsSubmit} className="space-y-4">
-          <h3 className="text-xl font-semibold">Edit Details</h3>
+          <div className="space-y-4">
 
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder={storedUser?.user?.fullName || "Full Name"}
-            className="w-full border rounded-lg px-4 py-2"
-          />
+            {/* Details Card */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-xl">✏️</span>
+                <h2 className="text-base font-black text-slate-800 dark:text-slate-100">Personal Details</h2>
+              </div>
+              <form onSubmit={handleDetailsSubmit} className="space-y-3">
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder={storedUser?.user?.fullName || "Full Name"}
+                  className="input-premium"
+                />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={storedUser?.user?.email || "Email Address"}
+                  className="input-premium"
+                />
+                <button
+                  type="submit"
+                  disabled={detailsLoading}
+                  className="premium-btn-primary w-full mt-1 disabled:opacity-60"
+                >
+                  {detailsLoading ? "Saving..." : "Save Changes"}
+                </button>
+              </form>
+            </div>
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={storedUser?.user?.email || "Email"}
-            className="w-full border rounded-lg px-4 py-2"
-          />
+            {/* Avatar Card */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-xl">🖼️</span>
+                <h2 className="text-base font-black text-slate-800 dark:text-slate-100">Profile Picture</h2>
+              </div>
+              <form onSubmit={handleAvatarSubmit} className="space-y-3">
+                <label className="block w-full cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-indigo-400 transition-colors p-4 text-center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setAvatarFile(e.target.files[0])}
+                    className="hidden"
+                  />
+                  <span className="text-sm font-semibold text-slate-400">
+                    {avatarFile ? avatarFile.name : "Click to select image"}
+                  </span>
+                </label>
+                <button
+                  type="submit"
+                  disabled={avatarLoading}
+                  className="premium-btn-primary w-full disabled:opacity-60"
+                >
+                  {avatarLoading ? "Uploading..." : "Upload Avatar"}
+                </button>
+              </form>
+            </div>
 
-          <button disabled={detailsLoading} className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 disabled:opacity-60">
-            {detailsLoading ? "Updating..." : "Update Details"}
-          </button>
-        </form>
+            {/* Cover Card */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-xl">🌄</span>
+                <h2 className="text-base font-black text-slate-800 dark:text-slate-100">Cover Image</h2>
+              </div>
+              <form onSubmit={handleCoverSubmit} className="space-y-3">
+                <label className="block w-full cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-indigo-400 transition-colors p-4 text-center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setCoverFile(e.target.files[0])}
+                    className="hidden"
+                  />
+                  <span className="text-sm font-semibold text-slate-400">
+                    {coverFile ? coverFile.name : "Click to select image"}
+                  </span>
+                </label>
+                <button
+                  type="submit"
+                  disabled={coverLoading}
+                  className="premium-btn-primary w-full disabled:opacity-60"
+                >
+                  {coverLoading ? "Uploading..." : "Upload Cover"}
+                </button>
+              </form>
+            </div>
 
-        {/* ================= AVATAR FORM ================= */}
-        <form onSubmit={handleAvatarSubmit} className="space-y-4">
-          <h3 className="text-xl font-semibold">Update Avatar</h3>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setAvatarFile(e.target.files[0])}
-            className="w-full border rounded-lg px-4 py-2"
-          />
-
-          <button disabled={avatarLoading} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-60">
-            {avatarLoading ? "Uploading..." : "Upload Avatar"}
-          </button>
-        </form>
-
-        {/* ================= COVER FORM ================= */}
-        <form onSubmit={handleCoverSubmit} className="space-y-4">
-          <h3 className="text-xl font-semibold">Update Cover Image</h3>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setCoverFile(e.target.files[0])}
-            className="w-full border rounded-lg px-4 py-2"
-          />
-
-          <button disabled={coverLoading} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-60">
-            {coverLoading ? "Uploading..." : "Upload Cover"}
-          </button>
-        </form>
-
+          </div>
+        </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
 

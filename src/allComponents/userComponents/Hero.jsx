@@ -65,22 +65,12 @@ function Hero() {
         </div>
       </section>
 
-      {/* Featured Preview / Video Grid Section */}
+      {/* Video Grid Section */}
       <section className="mt-12 px-2 animate-in fade-in duration-1000 delay-300">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-black tracking-tight text-slate-900">Trending Now</h2>
-            <p className="text-sm font-medium text-slate-500 mt-1">Discover the most popular creators today</p>
-          </div>
-          <button className="text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-            View All Content
-          </button>
-        </div>
-
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 pointer-events-none z-10 h-20 -top-20" />
-          <div className="surface-card rounded-3xl p-1 shadow-sm border border-slate-100 overflow-hidden">
-             <div className="bg-white rounded-[1.4rem] p-6 lg:p-8">
+          <div className="surface-card rounded-3xl p-1 shadow-sm border border-slate-100 overflow-hidden dark:border-slate-800">
+             <div className="bg-white dark:bg-slate-900 rounded-[1.4rem] p-6 lg:p-8">
                 <AllVdo />
              </div>
           </div>

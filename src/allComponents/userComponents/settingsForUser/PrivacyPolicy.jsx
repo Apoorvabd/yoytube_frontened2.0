@@ -1,15 +1,17 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { GiCrossedBones } from "react-icons/gi";
+import AppShell from "../../layout/AppShell";
+import { ArrowLeft } from "lucide-react";
 
 const sections = [
   {
-    title: "1. Introduction",
-    content:
-      "Welcome to our Video Sharing Platform. Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.",
+    title: "Introduction",
+    emoji: "👋",
+    content: "Welcome to our Video Sharing Platform. Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.",
   },
   {
-    title: "2. Information We Collect",
+    title: "Information We Collect",
+    emoji: "📋",
     content: "We may collect several types of information including:",
     list: [
       "Personal information such as name, email address, and profile details.",
@@ -20,7 +22,8 @@ const sections = [
     ],
   },
   {
-    title: "3. How We Use Your Information",
+    title: "How We Use Your Information",
+    emoji: "⚙️",
     list: [
       "To provide and maintain our services.",
       "To personalize your content recommendations.",
@@ -30,128 +33,120 @@ const sections = [
     ],
   },
   {
-    title: "4. Cookies and Tracking Technologies",
-    content:
-      "We use cookies and similar tracking technologies to enhance user experience, analyze site traffic, and remember user preferences.",
+    title: "Cookies & Tracking",
+    emoji: "🍪",
+    content: "We use cookies and similar tracking technologies to enhance user experience, analyze site traffic, and remember user preferences.",
   },
   {
-    title: "5. Third-Party Services",
-    content:
-      "Our platform may use third-party services such as analytics providers, payment processors, and cloud storage providers. These services may collect information according to their own privacy policies.",
+    title: "Third-Party Services",
+    emoji: "🔗",
+    content: "Our platform may use third-party services such as analytics providers, payment processors, and cloud storage providers. These services may collect information according to their own privacy policies.",
   },
   {
-    title: "6. Data Security",
-    content:
-      "We implement industry-standard security measures to protect your personal data from unauthorized access, alteration, disclosure, or destruction.",
+    title: "Data Security",
+    emoji: "🛡️",
+    content: "We implement industry-standard security measures to protect your personal data from unauthorized access, alteration, disclosure, or destruction.",
   },
   {
-    title: "7. Your Privacy Rights",
-    content:
-      "Depending on your location, you may have rights regarding your personal data such as access, correction, deletion, and restriction of processing.",
+    title: "Your Privacy Rights",
+    emoji: "⚖️",
+    content: "Depending on your location, you may have rights regarding your personal data such as access, correction, deletion, and restriction of processing.",
   },
   {
-    title: "8. Children's Privacy",
-    content:
-      "Our platform is not intended for children under the age of 13. We do not knowingly collect personal information from children.",
+    title: "Children's Privacy",
+    emoji: "👶",
+    content: "Our platform is not intended for children under the age of 13. We do not knowingly collect personal information from children.",
   },
   {
-    title: "9. Changes to This Policy",
-    content:
-      "We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated revision date.",
+    title: "Policy Updates",
+    emoji: "🔄",
+    content: "We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated revision date.",
   },
   {
-    title: "10. Contact Us",
-    content:
-      "If you have any questions about this Privacy Policy, you can contact us at: support@yourplatform.com",
+    title: "Contact Us",
+    emoji: "📩",
+    content: "If you have any questions about this Privacy Policy, you can contact us at: support@navyaeakshan.com",
   },
 ];
 
 function PrivacyPolicy() {
   const navigate = useNavigate();
-  const scrollRef = useRef(null);
+  const contentRef = useRef(null);
 
   const scrollToSection = (i) => {
-    const el = document.getElementById(`section-${i}`);
-    if (el && scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: el.offsetTop - 20,
-        behavior: "smooth",
-      });
+    const el = document.getElementById(`priv-section-${i}`);
+    if (el && contentRef.current) {
+      contentRef.current.scrollTo({ top: el.offsetTop - 20, behavior: "smooth" });
     }
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen mt-12 mb-12 px-4">
+    <AppShell>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/10 py-10 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
 
-      {/* main container */}
-      <div className="w-[85%] bg-neutral-200 rounded-2xl shadow-2xl flex p-4 animate-fade-up">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-8">
+            <button
+              onClick={() => navigate("/settings")}
+              className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95 shrink-0"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <div>
+              <p className="text-xs font-black uppercase tracking-widest text-emerald-500 mb-0.5">Settings</p>
+              <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Privacy Policy</h1>
+            </div>
+            <span className="ml-auto text-xs text-slate-400 font-medium shrink-0">Last updated: Mar 2026</span>
+          </div>
 
-        {/* left navigation */}
-        <div className="w-72 flex-shrink-0 flex flex-col items-center pt-12 border-r border-neutral-800">
+          <div className="flex gap-6">
+            {/* Sidebar TOC */}
+            <nav className="hidden md:flex flex-col gap-1 w-52 shrink-0 sticky top-6 self-start">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 px-2">Contents</p>
+              {sections.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToSection(i)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-left"
+                >
+                  <span className="text-base leading-none">{s.emoji}</span>
+                  <span className="truncate">{s.title}</span>
+                </button>
+              ))}
+            </nav>
 
-          <h2 className="text-3xl font-bold text-black mb-2 tracking-wide text-center">
-            Privacy Policy
-          </h2>
-
-          <p className="text-neutral-600 text-sm mb-10">Last Updated: March 2026</p>
-
-          <nav className="flex flex-col gap-3 w-full px-6">
-            {sections.map((s, i) => (
-              <button
-                key={i}
-                className="navBtn text-sm text-left"
-                onClick={() => scrollToSection(i)}
-              >
-                {s.title}
-              </button>
-            ))}
-          </nav>
-
-        </div>
-
-        {/* right content — scrollable */}
-        <div
-          ref={scrollRef}
-          className="flex-1 relative p-12 text-black overflow-y-auto max-h-[85vh]"
-        >
-
-          <button
-            className="absolute top-6 right-6 text-red-500 hover:text-red-400 transition"
-            onClick={() => navigate("/settings")}
-          >
-            <GiCrossedBones className="text-3xl" />
-          </button>
-
-          <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
-          <p className="text-neutral-600 mb-10 text-sm">Last Updated: March 2026</p>
-
-          <div className="space-y-8">
-            {sections.map((s, i) => (
-              <section
-                key={i}
-                id={`section-${i}`}
-                className="space-y-3 border-b border-neutral-400 pb-6 last:border-none"
-              >
-                <h2 className="text-xl font-semibold text-black">{s.title}</h2>
-
-                {s.content && (
-                  <p className="text-neutral-800 leading-relaxed">{s.content}</p>
-                )}
-
-                {s.list && (
-                  <ul className="list-disc pl-6 text-neutral-800 space-y-1">
-                    {s.list.map((item, j) => (
-                      <li key={j}>{item}</li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            ))}
+            {/* Main Content */}
+            <div ref={contentRef} className="flex-1 space-y-6">
+              {sections.map((s, i) => (
+                <div
+                  key={i}
+                  id={`priv-section-${i}`}
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-2xl leading-none">{s.emoji}</span>
+                    <h2 className="text-base font-black text-slate-800 dark:text-slate-100">{s.title}</h2>
+                  </div>
+                  {s.content && <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{s.content}</p>}
+                  {s.list && (
+                    <ul className="mt-3 space-y-2">
+                      {s.list.map((item, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm text-slate-500 dark:text-slate-400">
+                          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
 

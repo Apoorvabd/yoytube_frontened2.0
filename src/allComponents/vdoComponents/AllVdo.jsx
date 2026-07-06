@@ -1,8 +1,15 @@
 import Card_for_vd0 from "./Card_for_vd0";
-import SectionRow from "./SectionRow";
 import api from "../../lib/api";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { VideoContext } from "../../contexts/VideoContext";
+import { ChevronDown, SlidersHorizontal, Flame, Calendar, Clock, ArrowUpDown } from "lucide-react";
+
+const SORT_OPTIONS = [
+  { id: "views", label: "Trending Now", icon: Flame, desc: "Most viewed videos first" },
+  { id: "createdAt", label: "Recently Added", icon: Calendar, desc: "Newest uploads first" },
+  { id: "duration", label: "Long Duration", icon: Clock, desc: "Longer format videos" },
+  { id: "title", label: "Alphabetical", icon: ArrowUpDown, desc: "Videos sorted A-Z" },
+];
 
 function AllVdo() {
   const ctx = useContext(VideoContext);
@@ -11,38 +18,35 @@ function AllVdo() {
   const { videos, setVideos } = ctx;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState("views"); // default sort is views / trending
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  const [trendingVideos, setTrendingVideos] = useState([]);
-  const [recommendedVideos, setRecommendedVideos] = useState([]);
-  const [recentVideos, setRecentVideos] = useState([]);
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         setLoading(true);
         const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (!storedUser?.accessToken) {
-          setError("Please log in to view premium content");
-          setLoading(false);
-          return;
-        }
 
-        const authHeaders = {
-          headers: { Authorization: `Bearer ${storedUser.accessToken}` }
-        };
+        // Auth headers are optional — guests can still browse videos
+        const authHeaders = storedUser?.accessToken
+          ? { headers: { Authorization: `Bearer ${storedUser.accessToken}` } }
+          : {};
 
-        const [allRes, trendingRes, recentRes, recommendedRes] = await Promise.all([
-          api.get("/videos", authHeaders),
-          api.get("/videos?sortBy=views&sortType=desc&limit=8", authHeaders),
-          api.get("/videos?sortBy=createdAt&sortType=desc&limit=10", authHeaders),
-          api.get("/videos?sortBy=duration&sortType=desc&limit=8", authHeaders),
-        ]);
-
-        setVideos(allRes.data?.data?.videos || []);
-        setTrendingVideos(trendingRes.data?.data?.videos || []);
-        setRecentVideos(recentRes.data?.data?.videos || []);
-        setRecommendedVideos(recommendedRes.data?.data?.videos || []);
-        
+        // Fetching more videos to populate a complete grid (e.g. limit=40)
+        const res = await api.get(`/videos?sortBy=${sortBy}&sortType=desc&limit=40`, authHeaders);
+        setVideos(res.data?.data?.videos || []);
         setError(null);
       } catch (err) {
         console.error(err);
@@ -53,10 +57,13 @@ function AllVdo() {
     };
 
     fetchVideos();
-  }, [setVideos]);
+  }, [sortBy, setVideos]);
+
+  const activeOption = SORT_OPTIONS.find(opt => opt.id === sortBy) || SORT_OPTIONS[0];
+  const ActiveIcon = activeOption.icon;
 
   return (
-    <section className="space-y-12 pb-20 bg-background text-foreground transition-colors duration-300">
+    <section className="space-y-8 pb-20 bg-background text-foreground transition-colors duration-300">
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center shadow-sm transition-all hover:shadow-md">
           <p className="text-sm font-bold text-red-600">{error}</p>
@@ -69,51 +76,95 @@ function AllVdo() {
         </div>
       )}
 
-      {/* Dynamic Sections */}
-      {trendingVideos.length > 0 && (
-        <div className="transition-all duration-500 ease-out opacity-100 translate-y-0">
-          <SectionRow title="Trending Now" videos={trendingVideos} loading={loading} />
+      {/* Control Bar & Filter Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-6 px-4">
+        <div>
+          <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            Explore Content
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+          </h3>
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">
+            Displaying {videos.length} videos sorted by {activeOption.label.toLowerCase()}
+          </p>
         </div>
-      )}
 
-      {recommendedVideos.length > 0 && (
-        <div className="transition-all duration-500 ease-out delay-75 opacity-100 translate-y-0">
-          <SectionRow title="Recommended for You" videos={recommendedVideos} loading={loading} />
-        </div>
-      )}
+        {/* Dropdown Select Menu */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="flex w-full sm:w-auto items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-800 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800/80 active:scale-98"
+          >
+            <span className="flex items-center gap-2">
+              <ActiveIcon size={16} className="text-primary animate-pulse" />
+              <span>Sort: {activeOption.label}</span>
+            </span>
+            <ChevronDown 
+              size={16} 
+              className={`text-slate-400 transition-transform duration-300 ${dropdownOpen ? "rotate-180 text-primary" : ""}`} 
+            />
+          </button>
 
-      {recentVideos.length > 0 && (
-        <div className="transition-all duration-500 ease-out delay-150 opacity-100 translate-y-0">
-          <SectionRow title="Fresh Content" videos={recentVideos} loading={loading} />
+          {dropdownOpen && (
+            <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white/95 p-1.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 dark:border-slate-800 dark:bg-slate-950/95 z-50">
+              <div className="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-900 mb-1">
+                Choose View Options
+              </div>
+              {SORT_OPTIONS.map((option) => {
+                const OptionIcon = option.icon;
+                const isSelected = option.id === sortBy;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => {
+                      setSortBy(option.id);
+                      setDropdownOpen(false);
+                    }}
+                    className={`flex w-full items-start gap-3 rounded-xl px-3.5 py-3 text-left transition-all duration-200 ${
+                      isSelected
+                        ? "bg-slate-100 text-primary dark:bg-slate-900 dark:text-white"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-900/50 dark:hover:text-white"
+                    }`}
+                  >
+                    <OptionIcon size={16} className={`mt-0.5 shrink-0 ${isSelected ? "text-primary" : "text-slate-400"}`} />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold leading-none">{option.label}</span>
+                      <span className="text-[10px] text-slate-500 mt-1">{option.desc}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Main Grid */}
-      {!loading && videos && videos.length > 0 && (
-        <div className="space-y-8 px-4">
-          <div className="flex items-center gap-4">
-            <h3 className="text-xl md:text-2xl font-black tracking-tight text-foreground italic border-b-4 border-primary pb-2">
-              Explore Library
-            </h3>
-            <div className="h-[1px] flex-1 bg-border" />
-          </div>
-
+      {!loading && videos && videos.length > 0 ? (
+        <div className="px-4">
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
             {videos.map((video) => (
               <Card_for_vd0 key={video._id} video={video} />
             ))}
           </div>
         </div>
+      ) : !loading && (
+        <div className="mx-4 rounded-[2rem] border-2 border-dashed border-border bg-muted/20 p-16 text-center">
+          <p className="text-sm font-black text-muted-foreground uppercase tracking-widest">No videos found</p>
+        </div>
       )}
 
+      {/* Skeleton Loading State */}
       {loading && (
         <div className="grid grid-cols-1 gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[1,2,3,4,5,6,7,8].map(i => (
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
             <div key={i} className="space-y-4">
-              <div className="aspect-video w-full animate-pulse rounded-2xl bg-muted" />
+              <div className="aspect-video w-full animate-pulse rounded-[1.5rem] bg-slate-200/80 dark:bg-slate-800/80" />
               <div className="space-y-2">
-                <div className="h-4 w-3/4 animate-pulse rounded-lg bg-muted" />
-                <div className="h-3 w-1/2 animate-pulse rounded-lg bg-muted/60" />
+                <div className="h-4 w-3/4 animate-pulse rounded-lg bg-slate-200/80 dark:bg-slate-800/80" />
+                <div className="h-3 w-1/2 animate-pulse rounded-lg bg-slate-200/60 dark:bg-slate-800/60" />
               </div>
             </div>
           ))}

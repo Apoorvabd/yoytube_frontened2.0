@@ -1,3 +1,4 @@
+import { Loader } from "./Loader";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useLocation } from "react-router-dom";
@@ -13,7 +14,7 @@ function AppShell({ children, onSearch }) {
         <main className="flex-1 min-w-0 px-4 py-4 md:py-8 md:p-0">
           <div
             key={location.pathname}
-            className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out"
+            className="animate-page-entrance"
           >
             {children}
           </div>
@@ -23,6 +24,7 @@ function AppShell({ children, onSearch }) {
       {/* Mobile Bottom Navigation Bar (Responsive addition) */}
       <div className="fixed bottom-0 left-0 right-0 z-[100] flex items-center justify-around border-t border-border bg-background/95 p-2 backdrop-blur-lg lg:hidden">
         <Sidebar isMobileNav />
+        
       </div>
     </div>
   );

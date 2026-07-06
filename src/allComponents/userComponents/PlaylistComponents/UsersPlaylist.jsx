@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import  Loader  from "../../layout/Loader";
+import { Loader } from "../../layout/Loader";
 
 export default function PlaylistDetail() {
   const { id } = useParams();
@@ -53,9 +53,10 @@ export default function PlaylistDetail() {
     } catch (error) {
       toast.error("Failed to remove video");
     }
+    
   };
 
-  if (loading) return <Loader/>;
+  if (loading) return <div className="flex justify-center h-screen"><Loader/></div>;
   if (!playlist) return <div>Playlist not found</div>;
 
   return (

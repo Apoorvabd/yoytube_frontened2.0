@@ -2,6 +2,7 @@ import api from "../../../lib/api";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import {Loader} from "../../layout/Loader"; 
 
 function Card() {
   const [playlists, setPlaylists] = useState([]);
@@ -38,7 +39,7 @@ function Card() {
   };
 
   if (loading) {
-    return <div className="p-6 text-center text-slate-400">Loading playlists...</div>;
+    return <Loader/>;
   }
 
   return (

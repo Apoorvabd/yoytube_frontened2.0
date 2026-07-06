@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api, { getAuthHeaders } from "@/lib/api";
 import AppShell from "../layout/AppShell";
 import Card_for_vd0 from "../vdoComponents/Card_for_vd0";
+import {Loader} from "../layout/Loader";
 
 function WatchHistory() {
 
@@ -22,13 +23,21 @@ function WatchHistory() {
       console.log(err);
       setError("Failed to load watch history");
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 600);
     }
   };
 
   useEffect(() => {
     fetchHistory();
   }, []);
+
+  if(loading){
+    return (
+      <Loader/>
+    )
+  }
 
   return (
     <AppShell>

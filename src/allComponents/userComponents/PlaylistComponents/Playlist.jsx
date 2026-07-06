@@ -2,12 +2,15 @@ import Card from "./Playlist_card";
 import { UIContext } from "@/contexts/UIContext";
 import { useContext } from "react";
 import Create_playlist from "./Create_playlist";
+import AppShell from "../../layout/AppShell";
 
 
 
 export  function Playlist() {
     const {setNewPlalistS,newPlaylistS}=useContext(UIContext);
+    
     return (
+        <AppShell>
         <div className="p-6 max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-8 border-b border-slate-700 pb-4">
                 <h1 className="text-3xl font-bold tracking-tight ">Your Playlists</h1>
@@ -27,6 +30,7 @@ export  function Playlist() {
             <Card/>
             
         </div>
+        </AppShell>
     )
 }
 export default Playlist 
