@@ -59,42 +59,132 @@ export default function PlaylistDetail() {
   if (loading) return <div className="flex justify-center h-screen"><Loader/></div>;
   if (!playlist) return <div>Playlist not found</div>;
 
-  return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">{playlist.name}</h1>
-        <p className="text-gray-600 mt-2">{playlist.description}</p>
-        <p className="text-sm mt-1">{playlist.videos?.length || 0} videos</p>
-        <button className="mt-10 border-2 w-40 border-slate-600 rounded-sm mr-12 p-2 font-extrabold bg-red-700" onClick={()=>handleAdd()}>Add Videos</button>
-         <button className="mt-10 border-2 w-40 border-slate-600 rounded-sm p-2 font-extrabold bg-red-700" onClick={()=>handleDelete()}>Delete playlist</button>
-      </div>
+ return (
+  <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
+    <div className="max-w-7xl mx-auto">
 
-      <div className="grid gap-4 shadow-xl bg-slate-100">
-        
-        {playlist.videos?.map((video) => (
-          <div key={video._id} className="flex gap-4 p-4 border rounded-lg bg-white shadow-sm items-center">
-            <Link to={`/video/${video._id}`} className="shrink-0">
-              <img src={video.thumbnail} alt={video.title} className="w-48 h-28 object-cover rounded" />
-            </Link>
-            <div className="flex-grow">
-              <Link to={`/video/${video._id}`}>
-                <h3 className="font-semibold text-lg hover:text-blue-600">{video.title}</h3>
-              </Link>
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{video.description}</p>
-            </div>
+      {/* Header */}
+      <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+              {playlist.name}
+            </h1>
+
+            <p className="text-gray-600 mt-3 max-w-3xl">
+              {playlist.description}
+            </p>
+
+            <p className="text-sm text-gray-500 mt-2">
+              {playlist.videos?.length || 0} Videos
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => handleRemove(video._id)}
-              className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg shrink-0"
+              onClick={handleAdd}
+              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
             >
-              Remove
+              Add Videos
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition"
+            >
+              Delete Playlist
             </button>
           </div>
-        ))}
-        {(!playlist.videos || playlist.videos.length === 0) && (
-          <p className="text-gray-500 text-center py-8">No videos in this playlist yet.</p>
-        )}
+
+        </div>
       </div>
-     
+
+      {/* Videos */}
+
+      {playlist.videos?.length > 0 ? (
+        <div className="space-y-5">
+
+          {playlist.videos.map((video) => (
+            <div
+              key={video._id}
+              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4"
+            >
+              <div className="flex flex-col md:flex-row gap-5">
+
+                {/* Thumbnail */}
+
+                <Link
+                  to={`/video/${video._id}`}
+                  className="w-full md:w-80 shrink-0"
+                >
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full aspect-video object-cover rounded-xl"
+                  />
+                </Link>
+
+                {/* Content */}
+
+                <div className="flex flex-col justify-between flex-1">
+
+                  <div>
+
+                    <Link to={`/video/${video._id}`}>
+                      <h2 className="text-xl font-bold hover:text-blue-600 transition">
+                        {video.title}
+                      </h2>
+                    </Link>
+
+                    <p className="text-gray-600 mt-3 line-clamp-3">
+                      {video.description}
+                    </p>
+
+                  </div>
+
+                  <div className="mt-5 flex justify-end">
+
+                    <button
+                      onClick={() => handleRemove(video._id)}
+                      className="px-5 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 font-semibold transition"
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          ))}
+
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl shadow-md p-16 flex flex-col items-center justify-center">
+
+          <div className="text-7xl mb-4">🎬</div>
+
+          <h2 className="text-2xl font-bold">
+            No Videos Yet
+          </h2>
+
+          <p className="text-gray-500 mt-2 text-center">
+            This playlist doesn't contain any videos.
+          </p>
+
+          <button
+            onClick={handleAdd}
+            className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-semibold"
+          >
+            Add Videos
+          </button>
+
+        </div>
+      )}
+
     </div>
-  );
+  </div>
+);
 }
