@@ -265,6 +265,8 @@ function Signup() {
             </div>
           </form>
 
+          <div className="bg-primary mt-10 flex pt-4 justify-center text-primary-foreground hover:bg-primary/90 w-full h-16 text-sm font-bold uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-primary/20"> Countinue with google </div>
+
           <div className="mt-10 text-center border-t border-border pt-8">
             <p className="text-sm font-bold text-muted-foreground">
               Member already?{" "}
