@@ -10,6 +10,7 @@ import api from "@/lib/api"
 import { GoogleLogin } from "@react-oauth/google";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useWindowSize } from "@uidotdev/usehooks";
 
 
 function Login() {
@@ -22,6 +23,14 @@ console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
     formState: { errors, isSubmitting },
   } = useForm()
   const [showLogin, setShowLogin] = useState(false);
+
+  // desktop breakpoint matches Tailwind's `md` (768px). Below this the
+  // panels stack vertically instead of animating side-by-side widths.
+  const { width: winWidth } = useWindowSize();
+  const isDesktop = winWidth ? winWidth >= 768 : true;
+
+  const outerWidth = isDesktop ? (showLogin ? "100%" : "70%") : "100%";
+  const leftWidth = isDesktop ? (showLogin ? "45%" : "100%") : "100%";
 
   const handleGoogleSuccess = async (credentialResponse) => {
  console.log(credentialResponse);
@@ -60,23 +69,29 @@ const onSubmit = async (data) => {
   }
 
 return (
-  <div className="min-h-screen  flex items-center justify-center p-6 overflow-hidden">
+  <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 overflow-hidden">
 
     <motion.div
       animate={{
-        width: showLogin ? "1000px" : "700px",
+        width: outerWidth,
       }}
       transition={{
         duration: 0.7,
         ease: "easeInOut",
       }}
       className="
-        h-[550px]
+        w-full
+        max-w-[1000px]
+        min-h-[500px]
+        md:h-[550px]
         bg-white
-        rounded-[40px]
+        rounded-[28px]
+        sm:rounded-[40px]
         shadow-xl
         overflow-hidden
         flex
+        flex-col
+        md:flex-row
       "
     >
 
@@ -84,7 +99,7 @@ return (
 
       <motion.div
         animate={{
-          width: showLogin ? "45%" : "100%",
+          width: leftWidth,
         }}
         transition={{
           duration: 0.7,
@@ -100,9 +115,13 @@ return (
           flex
           flex-col
           justify-center
-          px-12
+          px-6
+          py-10
+          sm:px-8
+          md:px-12
+          md:py-0
           overflow-hidden
-          background:url('')        "
+        "
       >
 
         {/* Background blobs */}
@@ -111,8 +130,10 @@ return (
           absolute
           -top-20
           -left-20
-          w-80
-          h-80
+          w-60
+          h-60
+          sm:w-80
+          sm:h-80
           bg-white/10
           rounded-full
         "/>
@@ -121,8 +142,10 @@ return (
           absolute
           bottom-[-100px]
           right-[-80px]
-          w-96
-          h-96
+          w-72
+          h-72
+          sm:w-96
+          sm:h-96
           bg-white/10
           rounded-full
         "/>
@@ -130,7 +153,7 @@ return (
 
         <motion.div
           animate={{
-            scale: showLogin ? 0.85 : 1
+            scale: showLogin && isDesktop ? 0.85 : 1
           }}
           transition={{
             duration:0.5
@@ -139,7 +162,9 @@ return (
         >
 
           <h1 className="
-            text-5xl
+            text-3xl
+            sm:text-4xl
+            md:text-5xl
             font-black
             leading-tight
           ">
@@ -150,9 +175,12 @@ return (
 
 
           <p className="
-            mt-5
+            mt-4
+            sm:mt-5
             text-white/80
-            text-lg
+            text-sm
+            sm:text-base
+            md:text-lg
             max-w-sm
           ">
             To keep connected with us,
@@ -177,13 +205,18 @@ return (
               onClick={()=>setShowLogin(true)}
 
               className="
-                mt-10
+                mt-8
+                sm:mt-10
                 border
                 border-white
-                px-12
-                py-3
+                px-8
+                sm:px-12
+                py-2.5
+                sm:py-3
                 rounded-full
                 font-bold
+                text-sm
+                sm:text-base
                 hover:bg-white
                 hover:text-blue-700
                 transition
@@ -216,17 +249,20 @@ return (
 
             initial={{
               opacity:0,
-              x:150
+              y: isDesktop ? 0 : 30,
+              x: isDesktop ? 150 : 0,
             }}
 
             animate={{
               opacity:1,
-              x:0
+              y:0,
+              x:0,
             }}
 
             exit={{
               opacity:0,
-              x:150
+              y: isDesktop ? 0 : 30,
+              x: isDesktop ? 150 : 0,
             }}
 
             transition={{
@@ -234,8 +270,11 @@ return (
             }}
 
             className="
-              w-[55%]
-              p-12
+              w-full
+              md:w-[55%]
+              p-6
+              sm:p-8
+              md:p-12
               flex
               flex-col
               justify-center
@@ -245,7 +284,8 @@ return (
 
 
             <h2 className="
-              text-3xl
+              text-2xl
+              sm:text-3xl
               font-black
               text-gray-900
             ">
@@ -254,6 +294,8 @@ return (
 
 
             <p className="
+              text-sm
+              sm:text-base
               text-gray-500
               mt-2
             ">
@@ -265,8 +307,10 @@ return (
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="
-                mt-8
-                space-y-5
+                mt-6
+                sm:mt-8
+                space-y-4
+                sm:space-y-5
               "
             >
 
@@ -281,13 +325,20 @@ return (
                   placeholder="Email Address"
 
                   className="
-                    h-14
+                    h-12
+                    sm:h-14
                     rounded-2xl
                     bg-gray-100
                     border-none
                     px-5
                   "
                 />
+
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1 ml-1">
+                    {errors.email.message}
+                  </p>
+                )}
 
               </div>
 
@@ -307,13 +358,20 @@ return (
                   placeholder="Password"
 
                   className="
-                    h-14
+                    h-12
+                    sm:h-14
                     rounded-2xl
                     bg-gray-100
                     border-none
                     px-5
                   "
                 />
+
+                {errors.password && (
+                  <p className="text-xs text-red-500 mt-1 ml-1">
+                    {errors.password.message}
+                  </p>
+                )}
 
               </div>
 
@@ -327,7 +385,8 @@ return (
 
                 className="
                   w-full
-                  h-14
+                  h-12
+                  sm:h-14
                   rounded-2xl
                   bg-blue-600
                   hover:bg-blue-700
@@ -358,7 +417,8 @@ return (
               flex
               items-center
               gap-3
-              my-6
+              my-5
+              sm:my-6
             ">
 
               <div className="
@@ -383,12 +443,7 @@ return (
 
 
             </div>
-
-
-
-
-
-            <div className="flex justify-center">
+            <div className="flex justify-center w-full">
 
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
@@ -402,8 +457,11 @@ return (
 
 
             <p className="
-              mt-6
+              mt-5
+              sm:mt-6
               text-center
+              text-sm
+              sm:text-base
               text-gray-500
             ">
 
@@ -442,111 +500,5 @@ return (
 
 
 }
-
-  // return (
-  //   <div className="min-h-screen bg-background flex items-center justify-center p-6 overflow-hidden relative">
-  //     <div className="absolute inset-0 z-0">
-  //       <div className="absolute top-[-10%] left-[-10%] h-[50%] w-[50%] rounded-full bg-primary/5 blur-[120px]" />
-  //       <div className="absolute bottom-[-10%] right-[-10%] h-[50%] w-[50%] rounded-full bg-primary/10 blur-[120px]" />
-  //     </div>
-
-  //     <div className="relative z-10 w-full max-w-md transition-all duration-700 ease-out opacity-100 translate-y-0">
-  //       <div className="mb-10 text-center">
-  //         <div className="inline-flex flex-col items-center gap-2 transition-transform duration-500 hover:scale-105">
-  //           <div className="h-16 w-16 rounded-[2rem] bg-primary flex items-center justify-center text-white shadow-2xl shadow-primary/40 mb-2">
-  //             <span className="text-3xl font-black">N</span>
-  //           </div>
-  //           <span className="text-4xl font-[1000] tracking-tighter text-black">
-  //             NAVYA<span className="text-primary">.</span>
-  //           </span>
-  //           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black">Creative Studio</p>
-  //         </div>
-  //       </div>
-
-  //       <div className="bg-card p-10 md:p-12 border border-border shadow-2xl relative overflow-hidden rounded-3xl">
-  //         <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary/10" />
-
-  //         <div className="mb-10">
-  //           <h2 className="text-3xl font-black text-black tracking-tighter">Welcome back</h2>
-  //           <p className="text-sm font-bold text-black mt-2">Enter your credentials to continue</p>
-  //         </div>
-
-  //         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-  //           <div className="space-y-3">
-  //             <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Email Address</Label>
-  //             <Input
-  //               {...register("email", { required: "Email is required" })}
-  //               className="bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary h-14 px-6 text-base rounded-2xl transition-all"
-  //               placeholder="alex@studio.com"
-  //             />
-  //             {errors.email && (
-  //               <p className="text-[10px] font-bold text-destructive uppercase ml-1 animate-pulse">
-  //                 {errors.email.message}
-  //               </p>
-  //             )}
-  //           </div>
-
-  //           <div className="space-y-3">
-  //             <div className="flex items-center justify-between px-1">
-  //               <Label className="text-[10px] text-black uppercase tracking-[0.2em] text-primary">Password</Label>
-  //               <button 
-  //                 type="button" 
-  //                 className="text-[10px] font-black uppercase tracking-[0.1em] text-black hover:text-primary transition-colors focus:outline-none"
-  //               >
-  //                 Forgot Key?
-  //               </button>
-  //             </div>
-  //             <Input
-  //               type="password"
-  //               {...register("password", { required: "Password is required" })}
-  //               className="bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary h-14 px-6 text-black rounded-2xl transition-all"
-  //               placeholder="••••••••"
-  //             />
-  //             {errors.password && (
-  //               <p className="text-[10px] font-bold text-destructive uppercase ml-1 animate-pulse">
-  //                 {errors.password.message}
-  //               </p>
-  //             )}
-  //           </div>
-
-  //           <div className="transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]">
-  //             <Button 
-  //               type="submit" 
-  //               disabled={isSubmitting} 
-  //               className="bg-primary text-primary-foreground hover:bg-primary/90 w-full h-14 text-sm font-bold uppercase tracking-[0.2em] py-4 rounded-2xl shadow-lg shadow-primary/20"
-  //             >
-  //               {isSubmitting ? (
-  //                 <div className="flex items-center gap-3">
-  //                   <div className="h-4 w-4 border-2 border-white/30 border-t-white animate-spin rounded-full" />
-  //                   Verifying...
-  //                 </div>
-  //               ) : "Sign In to Studio"}
-  //             </Button>
-  //           </div>
-  //         </form>
-  //         <div className="mt-6 text-center">  
-  //         <span className="text-sm font-bold text-muted-foreground">or continue with</span>
-  //         </div>
-  //           <GoogleLogin className="mt-4 w-full flex justify-center items-center bg-white text-black border border-border hover:bg-primary/5 focus:bg-primary/10 h-14 rounded-2xl transition-all"
-  //       onSuccess={handleGoogleSuccess}
-  //       onError={handleGoogleError}
-  //     />
-
-  //         <div className="mt-10 text-center">
-  //           <p className="text-sm font-bold text-muted-foreground">
-  //             New to the platform?{" "}
-  //             <button 
-  //               onClick={() => navigate("/signup")}
-  //               className="text-primary hover:underline underline-offset-4 decoration-2 focus:outline-none transition-all"
-  //             >
-  //               Create Account
-  //             </button>
-  //           </p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
 
 export default Login;

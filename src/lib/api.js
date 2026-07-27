@@ -1,10 +1,15 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.BASE_URL || "http://localhost:8000/api/v1",
-  // baseURL: "http://localhost:8000/api/v1",
+  baseURL:
+    import.meta.env.VITE_BASE_URL ||
+    "http://localhost:8000/api/v1",
   withCredentials: true,
 });
+
+// ------------------------
+// Helpers
+// ------------------------
 
 export const getStoredUser = () => {
   try {
@@ -14,19 +19,18 @@ export const getStoredUser = () => {
   }
 };
 
-export const getAuthHeaders = () => {
-  const storedUser = getStoredUser();
-  const token = storedUser?.accessToken;
-
-  return token
-    ? {
-        Authorization: `Bearer ${token}`,
-      }
-    : {};
+export const setStoredUser = (user) => {
+  localStorage.setItem("user", JSON.stringify(user));
 };
 
+export const clearStoredUser = () => {
+  localStorage.removeItem("user");
+};
 
-// Automatically append access token
+// ------------------------
+// Request Interceptor
+// ------------------------
+
 api.interceptors.request.use(
   (config) => {
     const token = getStoredUser()?.accessToken;
@@ -40,8 +44,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+export const getAuthHeaders = () => {
+  const token = getStoredUser()?.accessToken;
 
-// Automatically refresh expired token
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+      }
+    : {};
+};
+
+// ------------------------
+// Response Interceptor
+// ------------------------
+
 api.interceptors.response.use(
   (response) => response,
 
@@ -50,41 +66,37 @@ api.interceptors.response.use(
 
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      originalRequest.url !== "/users/refresh-token"
     ) {
       originalRequest._retry = true;
 
       try {
-        const refreshResponse = await api.post(
-          "/users/refresh-token"
-        );
+        const { data } = await api.post("/users/refresh-token");
 
-        const newAccessToken =
-          refreshResponse.data.data.accessToken;
+        const newAccessToken = data.data.accessToken;
 
         const storedUser = getStoredUser();
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...storedUser,
-            accessToken: newAccessToken,
-          })
-        );
+        setStoredUser({
+          ...storedUser,
+          accessToken: newAccessToken,
+        });
 
-        originalRequest.headers.Authorization =
-          `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return api(originalRequest);
+      } catch (refreshError) {
+        clearStoredUser();
 
-      } catch (err) {
-        return Promise.reject(err);
+        window.location.href = "/login";
+
+        return Promise.reject(refreshError);
       }
     }
 
     return Promise.reject(error);
   }
 );
-
 
 export default api;
