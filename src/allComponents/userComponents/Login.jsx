@@ -348,15 +348,11 @@ return (
               <div>
 
                 <Input
-
                   type="password"
-
                   {...register("password",{
                     required:"Password is required"
                   })}
-
                   placeholder="Password"
-
                   className="
                     h-12
                     sm:h-14
@@ -366,7 +362,6 @@ return (
                     px-5
                   "
                 />
-
                 {errors.password && (
                   <p className="text-xs text-red-500 mt-1 ml-1">
                     {errors.password.message}
@@ -374,15 +369,8 @@ return (
                 )}
 
               </div>
-
-
-
-
-
               <Button
-
                 disabled={isSubmitting}
-
                 className="
                   w-full
                   h-12
@@ -393,9 +381,7 @@ return (
                   text-white
                   font-bold
                 "
-
               >
-
               {
                 isSubmitting
                 ?
